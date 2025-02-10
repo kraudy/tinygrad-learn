@@ -14,6 +14,7 @@ metal_renderer = MetalRenderer()
 const = UOp(Ops.CONST, dtypes.float, arg=1.0)
 
 const_rewritten = matcher.rewrite(const)
+
 define_global = UOp(Ops.DEFINE_GLOBAL, dtypes.float.ptr(), arg=0)
 special = UOp(Ops.SPECIAL, dtypes.int, arg=('gidx0', 16), src=())
 added = UOp(Ops.ADD, dtypes.long, arg=None, src=(define_global, special))
