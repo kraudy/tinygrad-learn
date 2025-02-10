@@ -103,16 +103,55 @@ views = [View.create(shape=(3, 2), strides=(2, 1)), View.create(shape=(2,3), str
 print("="*50)
 for v in reversed(views[0: -1]):
     idx, valid = v.to_indexed_uops()
-    print("idx ", idx)
-    print("kernel ", idx.render())
+    """
+    UOp(Ops.ADD, dtypes.int, arg=None, src=(
+    UOp(Ops.ADD, dtypes.int, arg=None, src=(
+      x1:=UOp(Ops.CONST, dtypes.int, arg=0, src=()),
+      UOp(Ops.MUL, dtypes.int, arg=None, src=(
+        UOp(Ops.RANGE, dtypes.int, arg=0, src=(
+          x1, #dim0 3 elem
+          UOp(Ops.CONST, dtypes.int, arg=3, src=()),)),
+        x5:=UOp(Ops.CONST, dtypes.int, arg=2, src=()),)),)), #stride 2
+    UOp(Ops.MUL, dtypes.int, arg=None, src=(
+      UOp(Ops.RANGE, dtypes.int, arg=1, src=(
+        x1,   #dim1 2 elem
+        x5,)),
+      UOp(Ops.CONST, dtypes.int, arg=1, src=()),)),)) #stride 1
+    kernel  ((ridx0*2)+ridx1) # *1 omited
+    """
     v = v.minify()
     print("="*30)
     idx, valid = v.to_indexed_uops()
-    print("minify idx ", idx)
-    print("minify kernel ", idx.render())
-    #print("="*20)
-    #for i in unravel(v.shape, idx): print(i)
+    """
+    #This collapeses shape (3,2) to (6) and stride to (1)
+    UOp(Ops.ADD, dtypes.int, arg=None, src=(
+    x0:=UOp(Ops.CONST, dtypes.int, arg=0, src=()),
+    UOp(Ops.MUL, dtypes.int, arg=None, src=(
+      UOp(Ops.RANGE, dtypes.int, arg=0, src=(
+        x0,
+        UOp(Ops.CONST, dtypes.int, arg=6, src=()),)), # dim0
+      UOp(Ops.CONST, dtypes.int, arg=1, src=()),)),)) # strides
+    minify kernel  ridx0 # note how simple the kernel for traversing becomes for dim0
+    """
     idx, valid = v.to_indexed_uops([sint_to_uop(i) for i in unravel(v.shape, idx)], valid)
     print("="*20)
     print("after op idx ", idx)
     print("after op kernel ", idx.render())
+    """
+    UOp(Ops.ADD, dtypes.int, arg=None, src=(
+    x0:=UOp(Ops.CONST, dtypes.int, arg=0, src=()),
+      UOp(Ops.MUL, dtypes.int, arg=None, src=( #dim0 * 6 ? review a x8 is missing
+        UOp(Ops.MOD, dtypes.int, arg=None, src=( #dim0 mod 1
+          UOp(Ops.IDIV, dtypes.int, arg=None, src=( #dim0 / 6
+            UOp(Ops.ADD, dtypes.int, arg=None, src=( #0 + dim0
+              x0, # 0 + dim0
+              UOp(Ops.MUL, dtypes.int, arg=None, src=( #dim0 * 1
+                UOp(Ops.RANGE, dtypes.int, arg=0, src=(
+                    x0,
+                  x7:=UOp(Ops.CONST, dtypes.int, arg=6, src=()),)),   #dim0 6 elem
+                x8:=UOp(Ops.CONST, dtypes.int, arg=1, src=()),)),)),  #strides 1
+            x8,)),
+          x7,)),
+        x8,)),))
+    after op kernel  ridx0
+"""
