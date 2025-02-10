@@ -1,4 +1,5 @@
 from tinygrad.shape.view import View
+from tinygrad.shape.view import unravel, sint_to_uop
 from tinygrad.ops import UOp, Ops
 from tinygrad import dtypes
 
@@ -94,3 +95,24 @@ print("kernel: ", idx.render())
 """
 (((((ridx0*2)+ridx1)%3)*2)+(((ridx0*2)+ridx1)//3))
 """
+
+from typing import Optional
+
+views = [View.create(shape=(3, 2), strides=(2, 1)), View.create(shape=(2,3), strides=(1,2))]
+
+print("="*50)
+for v in reversed(views[0: -1]):
+    idx, valid = v.to_indexed_uops()
+    print("idx ", idx)
+    print("kernel ", idx.render())
+    v = v.minify()
+    print("="*30)
+    idx, valid = v.to_indexed_uops()
+    print("minify idx ", idx)
+    print("minify kernel ", idx.render())
+    #print("="*20)
+    #for i in unravel(v.shape, idx): print(i)
+    idx, valid = v.to_indexed_uops([sint_to_uop(i) for i in unravel(v.shape, idx)], valid)
+    print("="*20)
+    print("after op idx ", idx)
+    print("after op kernel ", idx.render())
