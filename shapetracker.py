@@ -153,5 +153,93 @@ for v in reversed(views[0: -1]):
             x8,)),
           x7,)),
         x8,)),))
-    after op kernel  ridx0
+    after op kernel  ridx0 # Note how the AST is reduced when doing makeing the kernel, like a compiler
+    """ 
+
+views = [View.create(shape=(2,3), strides=(1,2)), View.create(shape=(3, 2), strides=(2, 1))]
+
+print("="*30)
+idx, valid = views[-1].to_indexed_uops()
+for view in reversed(views[0: -1]):
+    view = view.minify()
+    """We flatten the last view. We are going backward like the reversed topo."""
+    acc, idxs = 1, []
+    for d in reversed(view.shape):
+        idxs.append((idx//acc)%d)
+        acc *= d
+    print("beofre op idx ", idx)
+    print("beofre op kernel ", idx.render())
+    idx, valid = view.to_indexed_uops(idxs[::1], valid)
+    print("after op idx ", idx)
+    print("after op kernel ", idx.render())
+    print("="*20)
+
 """
+after op idx  UOp(Ops.ADD, dtypes.int, arg=None, src=(
+  x0:=UOp(Ops.CONST, dtypes.int, arg=0, src=()),
+  UOp(Ops.MUL, dtypes.int, arg=None, src=(
+    UOp(Ops.MOD, dtypes.int, arg=None, src=(
+      UOp(Ops.IDIV, dtypes.int, arg=None, src=(
+        UOp(Ops.ADD, dtypes.int, arg=None, src=(
+           x0,
+          UOp(Ops.MUL, dtypes.int, arg=None, src=(
+            UOp(Ops.RANGE, dtypes.int, arg=0, src=(
+               x0,
+              x7:=UOp(Ops.CONST, dtypes.int, arg=6, src=()),)),
+            x8:=UOp(Ops.CONST, dtypes.int, arg=1, src=()),)),)),
+         x8,)),
+       x7,)),
+     x8,)),))
+after op kernel  ridx0
+==============================
+# First view before change
+beofre op idx  UOp(Ops.ADD, dtypes.int, arg=None, src=(
+  UOp(Ops.ADD, dtypes.int, arg=None, src=(
+    x1:=UOp(Ops.CONST, dtypes.int, arg=0, src=()),
+    UOp(Ops.MUL, dtypes.int, arg=None, src=(
+      UOp(Ops.RANGE, dtypes.int, arg=0, src=(
+         x1,
+        UOp(Ops.CONST, dtypes.int, arg=3, src=()),)),
+      x5:=UOp(Ops.CONST, dtypes.int, arg=2, src=()),)),)),
+  UOp(Ops.MUL, dtypes.int, arg=None, src=(
+    UOp(Ops.RANGE, dtypes.int, arg=1, src=(
+       x1,
+       x5,)),
+    UOp(Ops.CONST, dtypes.int, arg=1, src=()),)),))
+
+beofre op kernel  ((ridx0*2)+ridx1)
+
+# First view changed
+after op idx  UOp(Ops.ADD, dtypes.int, arg=None, src=(
+  UOp(Ops.ADD, dtypes.int, arg=None, src=(
+    x1:=UOp(Ops.CONST, dtypes.int, arg=0, src=()),
+    UOp(Ops.MUL, dtypes.int, arg=None, src=(
+      UOp(Ops.MOD, dtypes.int, arg=None, src=(
+        UOp(Ops.IDIV, dtypes.int, arg=None, src=(
+          x5:=UOp(Ops.ADD, dtypes.int, arg=None, src=(
+            UOp(Ops.ADD, dtypes.int, arg=None, src=(
+               x1,
+              UOp(Ops.MUL, dtypes.int, arg=None, src=(
+                UOp(Ops.RANGE, dtypes.int, arg=0, src=(
+                   x1,
+                  x9:=UOp(Ops.CONST, dtypes.int, arg=3, src=()),)),
+                x10:=UOp(Ops.CONST, dtypes.int, arg=2, src=()),)),)),
+            UOp(Ops.MUL, dtypes.int, arg=None, src=(
+              UOp(Ops.RANGE, dtypes.int, arg=1, src=(
+                 x1,
+                 x10,)),
+              x13:=UOp(Ops.CONST, dtypes.int, arg=1, src=()),)),)),
+           x13,)),
+         x9,)),
+       x13,)),)),
+  UOp(Ops.MUL, dtypes.int, arg=None, src=(
+    UOp(Ops.MOD, dtypes.int, arg=None, src=(
+      UOp(Ops.IDIV, dtypes.int, arg=None, src=(
+         x5,
+         x9,)),
+       x10,)),
+     x10,)),))
+
+after op kernel  (((((ridx0*2)+ridx1)//3)*2)+(((ridx0*2)+ridx1)%3))
+"""
+
