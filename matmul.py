@@ -50,7 +50,6 @@ print(b)
 b = b.sum(0)
 print(b)
 
-
 """
 Since a Tensor is made of View, the View got the Strides, with the Strides we know how to traverse each element
 shape = (row, col)
@@ -61,4 +60,14 @@ i = row*x + b*col
 Why do we need this? We want to make operations of this thing and for that, we need a way to traverse through each
 element.
 So, the same View that we define helps us when we need to do the operations
+"""
+
+"""
+                Add new dim   Expand to 3 
+a = (2, 4) --> (2, 1, 4) ----------------> (2, 3, 4)
+                Add new dim   Transpose
+b = (4, 3) --> (1, 4, 3) --> (1, 3, 4) --> (2, 3, 4)
+
+Now to the dot product a@b and get c = (2, 3)
+We got to the operation just manipulating the View, doing a column-wise operation and then a reduce sum
 """
