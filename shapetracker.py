@@ -6,7 +6,8 @@ from tinygrad import dtypes
 """Is called view because it represents how the 2x2 continuos memory data
 is going to be 'view' by the stride """
 a = View.create(shape=(2,2), strides=(2,1))
-"""Note how a view is not a tensor"""
+"""Note how a view is not a tensor
+"""
 
 idx, valid = a.to_indexed_uops()
 """
@@ -53,7 +54,11 @@ print(a.strides) # (1, 2)
 
 a = a.reshape((3, 2))
 print(a)
-"""Oho. None. This is because this can not be accomplish with the same view"""
+"""Oho. None. This is because this can not be accomplish with the same view.
+Transposing and reshapeing a view requires another view because another shape and stride (or even only a stride)
+is needed, that's where shapetracker gets in.
+What we want is to proyect the indexes of the first view to the last view.
+"""
 
 from tinygrad.shape.shapetracker import ShapeTracker
 
