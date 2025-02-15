@@ -6,8 +6,12 @@ class Model:
     self.l2 = nn.Linear(16, 1) 
   
   def __call__(self, x: Tensor) -> Tensor:
-    x = self.l1(x).relu()#.sum(0)
-    return self.l2(x)#.relu().sum(0)
+    x = self.l1(x).relu()
+    """
+    This activation applies a linear transform that does the scalar multiplication and so sums
+    the output, so no sum(0) reduction needed
+    """
+    return self.l2(x)
 
 from sklearn.datasets import make_moons
 x, y = make_moons(n_samples=100, noise=0.1)
@@ -26,7 +30,6 @@ optim = nn.optim.Adam(nn.state.get_parameters(model))
 def train():
   Tensor.training = True # Needed for Optimizer.step()
   optim.zero_grad()
-  #loss = ((model(x) * y) > 0).mean().backward()
   loss = model(x).sigmoid().binary_crossentropy(y).backward()
   optim.step()
   if i % 100 == 0:  # Print every 100th iteration
