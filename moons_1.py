@@ -36,13 +36,26 @@ print(t.shape)
 [ 0.          0.          0.          6.6112766   0.19170047  0.43650466
   0.         11.394417    6.107524    0.          0.          5.8423243
   0.          0.          0.          3.224327  ]
-  
+
 shape: (16,)
 """
 
-#lin2 = nn.Linear(16, 1)
-#t = lin2(t)
-#print(t.numpy())
-#print(t.shape)
+print("="*25, ' relu2 ', "="*25)
 
+lin2 = nn.Linear(16, 1)
+t = lin2(t).relu()
+print(t.numpy())
+print(t.shape)
+"""
+[0.73632187]
+(1,)
+"""
+
+t = t.sum(0)
+print(t.numpy())
+print(t.shape)
+"""
+0.73632187
+()
+"""
 
