@@ -23,7 +23,22 @@ d = fd(a,b,c)
 print(d)
 
 h = 0.0001
+
 d1 = fd(a,b,c)
 d2 = fd(a+h,b,c)
 print("d1: ", d1, " d2: ", d2)
 print(f"slope {(d2-d1)/h}")
+"""
+d1:  4.0  d2:  3.999699999999999
+slope -3.000000000010772 # This means -3.00 times h was f(x) affected by a
+
+"""
+
+d1 = fd(a,b,c)
+d2 = fd(a,b+h,c)
+print("d1: ", d1, " d2: ", d2)
+print(f"slope {(d2-d1)/h}")
+"""
+d1:  4.0  d2:  4.0002
+slope 2.0000000000042206
+"""
