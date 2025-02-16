@@ -94,15 +94,38 @@ print("c | d1: ", d1, " d2: ", d2)
 print(f"slope {(d2-d1)/h}")
 """
 #   dl/dc = dl/dd * dd/dc | Chain rule
+#   dl/dc = 2 * 1  
 c | d1:  -8  d2:  -8.0002
+slope -1.9999999999953388
+"""
+
+d2 = lol(a=2, b=-3, c=10, e=0 + h, d=0, f=-2, L=0)
+print("e| d1: ", d1, " d2: ", d2)
+print(f"slope {(d2-d1)/h}")
+"""
+#   dl/de = dl/dd * dd/de | Chain rule
+#   dl/de = -2 * 1  
+e| d1:  -8  d2:  -8.0002
 slope -1.9999999999953388
 """
 
 
 d2 = lol(a=2 + h, b=-3, c=10, e=0, d=0, f=-2, L=0)
-print("d1: ", d1, " d2: ", d2)
+print("a | d1: ", d1, " d2: ", d2)
 print(f"slope {(d2-d1)/h}")
 """
-d1:  -16  d2:  -16.000300000000003
-slope -3.0000000000285354
+#   dl/da = dl/dd * dd/de * de/da | Chain rule
+#   dl/da = -2 * 1 * -3
+a | d1:  -8  d2:  -7.999399999999998
+slope 6.000000000021544
+"""
+
+d2 = lol(a=2, b=-3 + h, c=10, e=0, d=0, f=-2, L=0)
+print("b | d1: ", d1, " d2: ", d2)
+print(f"slope {(d2-d1)/h}")
+"""
+#   dl/db = dl/dd * dd/de * de/db | Chain rule
+#   dl/db = -2 * 1 * 2
+b | d1:  -8  d2:  -8.0004
+slope -4.000000000008441
 """
