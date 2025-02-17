@@ -129,3 +129,25 @@ print(f"slope {(d2-d1)/h}")
 b | d1:  -8  d2:  -8.0004
 slope -4.000000000008441
 """
+
+
+import torch
+
+x1 = torch.Tensor([2.0]).double()   ; x1.requires_grad=True
+x2 = torch.Tensor([0.0]).double()   ; x2.requires_grad=True
+w1 = torch.Tensor([-3.0]).double()  ; w1.requires_grad=True
+w2 = torch.Tensor([1.0]).double()   ; w2.requires_grad=True
+b = torch.Tensor([6.8813735870195432]).double()
+n = x1*w1 + x2*w2 + b
+o = torch.tanh(n)
+
+print(o.data.item())
+o.backward()
+
+print("="*50)
+print(f"x2: {x2.grad.item()}")
+print(f"w2: {w2.grad.item()}")
+print(f"x1: {x1.grad.item()}")
+print(f"w1: {w1.grad.item()}")
+
+
