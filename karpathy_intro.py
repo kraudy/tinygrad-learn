@@ -151,3 +151,39 @@ print(f"x1: {x1.grad.item()}")
 print(f"w1: {w1.grad.item()}")
 
 
+print("="*25," MLP ", "="*25)
+
+from micrograd.nn import MLP
+
+n = MLP(3, [4, 4, 1])
+"""
+3 Features input,
+Layer 1: w=3, n = 4
+Layer 2: w=4, n = 4
+Layer 3: w=4, n = 1"""
+
+xs = [
+  [2.0, 3.0, -1.0],
+  [3.0, -1.0, 0.5],
+  [0.5, 1.0, 1.0],
+  [1.0, 1.0, -1.0],
+]
+
+ys = [1.0, -1.0, -1.0, 1.0]
+
+for k in range(20):
+  output= [n(x) for x in xs]
+
+  loss = sum([(output[i] - ys[i])**2 for i in range(len(output))])
+
+  for p in n.parameters():
+    p.grad = 0.0
+
+  loss.backward()
+  print(loss)
+  
+  for p in n.parameters():
+      p.data -= 0.001 * p.grad
+                        
+
+
