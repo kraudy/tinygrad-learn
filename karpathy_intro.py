@@ -171,8 +171,9 @@ xs = [
 
 ys = [1.0, -1.0, -1.0, 1.0]
 
-for k in range(20):
+for k in range(50):
   output= [n(x) for x in xs]
+  #print([o.data for o in output])
 
   loss = sum([(output[i] - ys[i])**2 for i in range(len(output))])
 
