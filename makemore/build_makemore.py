@@ -26,9 +26,18 @@ for w in words:
     N_np[ix1, ix2] += 1
     """Get letter occurrence. This looks like a probability distribution over each letter"""
 
+import torch
+
+p = N_np[0].astype(float)
+p = p / p.sum()
+print(p)
+g = torch.Generator().manual_seed(2147483647)
+#p_tensor = torch.from_numpy(p)
+ix = torch.multinomial(torch.from_numpy(p), num_samples=1, replacement=True, generator=g)
+
 from tinygrad import Tensor, nn, TinyJit, dtypes
 
 N = Tensor(N_np, dtype=dtypes.int32)
 print(N.shape)
-print(N.numpy())
+#print(N.numpy())
 
