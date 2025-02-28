@@ -28,12 +28,21 @@ for w in words:
 
 import torch
 
-p = N_np[0].astype(float)
-p = p / p.sum()
-print(p)
+#p = N_np[0].astype(float)
+#p = p / p.sum()
+#print(p)
+
 g = torch.Generator().manual_seed(2147483647)
-#p_tensor = torch.from_numpy(p)
-ix = torch.multinomial(torch.from_numpy(p), num_samples=1, replacement=True, generator=g)
+ix = 0
+while True:
+    p = N_np[ix].astype(float)
+    p = p / p.sum()
+    ix = torch.multinomial(torch.from_numpy(p), num_samples=1, replacement=True, generator=g).item()
+    print(itos[ix])
+    if ix == 0: break
+    
+print(f"ix: {ix}")
+print(f"itos[ix]: {itos[ix]}")
 
 from tinygrad import Tensor, nn, TinyJit, dtypes
 
