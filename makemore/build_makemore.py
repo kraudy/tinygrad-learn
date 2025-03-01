@@ -31,8 +31,9 @@ import torch
 #p = N_np[0].astype(float)
 #p = p / p.sum()
 #print(p)
-P = N_np.astype(float)
-P = P / P.sum()
+P = torch.from_numpy(N_np.astype(float)) 
+P = P / P.sum(1, keepdims=True)
+print(f"P[0] Prob: {P[0].sum().item()}")
 
 g = torch.Generator().manual_seed(2147483647)
 for i in range(10):
@@ -40,7 +41,7 @@ for i in range(10):
   ix = 0
   while True:
       p = P[ix]
-      ix = torch.multinomial(torch.from_numpy(p), num_samples=1, replacement=True, generator=g).item()
+      ix = torch.multinomial(p, num_samples=1, replacement=True, generator=g).item()
       out.append(itos[ix])
       if ix == 0: break
   print(''.join(out))
