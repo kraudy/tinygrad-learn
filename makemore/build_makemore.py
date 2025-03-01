@@ -31,18 +31,19 @@ import torch
 #p = N_np[0].astype(float)
 #p = p / p.sum()
 #print(p)
+P = N_np.astype(float)
+P = P / P.sum()
 
 g = torch.Generator().manual_seed(2147483647)
-ix = 0
-while True:
-    p = N_np[ix].astype(float)
-    p = p / p.sum()
-    ix = torch.multinomial(torch.from_numpy(p), num_samples=1, replacement=True, generator=g).item()
-    print(itos[ix])
-    if ix == 0: break
-    
-print(f"ix: {ix}")
-print(f"itos[ix]: {itos[ix]}")
+for i in range(10):
+  out = []
+  ix = 0
+  while True:
+      p = P[ix]
+      ix = torch.multinomial(torch.from_numpy(p), num_samples=1, replacement=True, generator=g).item()
+      out.append(itos[ix])
+      if ix == 0: break
+  print(''.join(out))
 
 from tinygrad import Tensor, nn, TinyJit, dtypes
 
