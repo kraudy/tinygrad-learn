@@ -32,11 +32,11 @@ import torch
 #p = p / p.sum()
 #print(p)
 P = torch.from_numpy(N_np.astype(float)) 
-P = P / P.sum(1, keepdims=True)
+P /= P.sum(1, keepdims=True)
 print(f"P[0] Prob: {P[0].sum().item()}")
 
 g = torch.Generator().manual_seed(2147483647)
-for i in range(10):
+for i in range(50):
   out = []
   ix = 0
   while True:
@@ -45,6 +45,20 @@ for i in range(10):
       out.append(itos[ix])
       if ix == 0: break
   print(''.join(out))
+
+log_likelihood = 0.0
+n = 0
+
+for w in words[:3]:
+  chs = ['.'] + list(w) + ['.']
+  for ch1, ch2 in zip(chs, chs[1:]):
+    ix1 = stoi[ch1]
+    ix2 = stoi[ch2]
+    prob = P[ix1, ix2]
+    logprop = torch.log(prob)
+    log_likelihood += logprop
+    n += 1
+    print(f"{ch1}{ch2}: {prob:.4f} {logprop:.4f}")
 
 from tinygrad import Tensor, nn, TinyJit, dtypes
 
