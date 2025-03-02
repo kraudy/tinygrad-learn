@@ -13,25 +13,31 @@ stoi['.'] = 0
 itos = {i:s for s,i in stoi.items()}
 
 import numpy as np
+import torch
 
 # Use NumPy array for counting
-N_np = np.zeros((27, 27), dtype=np.int32)
-"""27x27 Matrix since we have 27 symbols."""
+#N_np = np.zeros((27, 27), dtype=np.int32)
+N = torch.ones(27, 27)
+"""27x27 Matrix since we have 27 symbols.
+Start each bytegram count as one to not get -inf on log function."""
 
 for w in words:
   chs = ['.'] + list(w) + ['.']
   for ch1, ch2 in zip(chs, chs[1:]):
     ix1 = stoi[ch1]
     ix2 = stoi[ch2]
-    N_np[ix1, ix2] += 1
-    """Get letter occurrence. This will be used for the probability distribution over each bytegram"""
+    N[ix1, ix2] += 1
+    """Get letter occurrence. This will be used for the probability distribution over each bytegram.
+    Important to note that here we are actually counting the ocurren of a token given a previous one.
+    """
 
-import torch
 
-P = torch.from_numpy(N_np.astype(float))
+P = N #torch.from_numpy(N_np.astype(float))
 P /= P.sum(1, keepdims=True)
 """We get the sum across rows and keep dimesions to get matrix of shape (27,1) so when the broadcasting
-is done for the division, the sum of the column get expanded to the 27 elemnts getting (27, 27)"""
+is done for the division, the sum of the column get expanded to the 27 elemnts getting (27, 27).
+This normalization gives us the probability distribution
+P(A|B)."""
 print(f"P[0] Prob: {P[0].sum().item()}")
 
 g = torch.Generator().manual_seed(2147483647)
@@ -54,7 +60,7 @@ log_likelihood = 0.0
 n = 0
 
 #for w in words[:3]:
-for w in ['roberto']:
+for w in ['andrejq']:
   chs = ['.'] + list(w) + ['.']
   for ch1, ch2 in zip(chs, chs[1:]):
     ix1 = stoi[ch1]
@@ -73,7 +79,7 @@ print(f"loss: {-log_likelihood}")
 
 from tinygrad import Tensor, nn, TinyJit, dtypes
 
-N = Tensor(N_np, dtype=dtypes.int32)
-print(N.shape)
+#N = Tensor(N, dtype=dtypes.int32)
+#print(N.shape)
 #print(N.numpy())
 
