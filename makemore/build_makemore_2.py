@@ -32,7 +32,7 @@ import torch.nn.functional as F
 xenc = F.one_hot(xs, num_classes=27).float()
 """One hot encoding makes a vector of 27 elements and assign probability on one to represent each element.
 This becomes the linear representation of the input."""
-print(xenc)
+print(xenc[0])
 
 W = torch.randn((27, 27))
 """(27, 1) means a neuron with vector of 27 wigths"""
@@ -40,5 +40,14 @@ print(xenc.shape, W.shape)
 """
 (5, 27) x (27, 1) will become (5, 1)
 (5,27) @ (27, 27) will become (5, 27)"""
-print((xenc @ W).shape)
-print((xenc @ W))
+logits = xenc @ W
+print(logits[0])
+"""These are the 'log counts'.
+Here, we are assuming that the output of the activation are units of exp (e) because we need
+probability and this will make negative numbers close to zero and positive numbers more positive. Very nice!"""
+counts = logits.exp()
+print(counts[0])
+"""The actual counts."""
+probs = counts / counts.sum(1, keepdims=True)
+"""Normalize the counts to make them probability values."""
+print(probs[0])
