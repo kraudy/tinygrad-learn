@@ -27,4 +27,15 @@ for w in words[:1]:
 xs = torch.tensor(xs)
 ys = torch.tensor(ys)
 
-print(xs, ys)
+import torch.nn.functional as F
+
+xenc = F.one_hot(xs, num_classes=27).float()
+"""One hot encoding makes a vector of 27 elements and assign probability on one to represent each element.
+This becomes the linear representation of the input."""
+print(xenc)
+
+W = torch.randn((27, 1))
+print(xenc.shape, W.shape)
+"""(5, 27) x (27, 1) will become (5, 1)"""
+print((xenc @ W).shape)
+print((xenc @ W))
