@@ -25,8 +25,7 @@ for w in words[:1]:
     ys.append(ix2)
   
 xs = torch.tensor(xs)
-ys = torch.tensor(ys)
-print(xs[:5], ys[:5])
+ys = torch.tensor(ys); print(xs[:5], ys[:5])
 
 g = torch.Generator().manual_seed(2147483647)
 W = torch.randn((27, 27), generator=g)
@@ -35,22 +34,20 @@ print(W.shape)
 
 import torch.nn.functional as F
 
-xenc = F.one_hot(xs, num_classes=27).float()
-"""One hot encoding makes a vector of 27 elements and assign probability on one to represent each element.
-This becomes the linear representation of the input."""
-print(xenc[0], xenc.shape)
-
-"""(5, 27) x (27, 1) will become (5, 1)
+xenc = F.one_hot(xs, num_classes=27).float(); print(xenc[0], xenc.shape) 
+"""One hot encoding makes a vector of 27 elements and assign one on the element index.
+This becomes the linear representation of the input
+(5, 27) x (27, 1) will become (5, 1)
 (5,27) @ (27, 27) will become (5, 27)"""
-logits = xenc @ W
-print(logits[0], logits.shape)
+
+logits = xenc @ W; print(logits[0], logits.shape)
 """These are the 'log counts'.
 Here, we are assuming that the output of the activation are units of exp (e) because we need
 probability and this will make negative numbers close to zero and positive numbers more positive. Very nice!"""
 
-counts = logits.exp()
-print(counts[0], counts.shape)
+counts = logits.exp(); print(counts[0], counts.shape)
 """The actual counts."""
-probs = counts / counts.sum(1, keepdims=True)
+
+probs = counts / counts.sum(1, keepdims=True); print(probs[0], probs.shape)
 """Normalize the counts to make them probability values."""
-print(probs[0], probs.shape)
+
