@@ -51,3 +51,7 @@ counts = logits.exp(); print(counts[0], counts.shape)
 probs = counts / counts.sum(1, keepdims=True); print(probs[0], probs.shape)
 """Normalize the counts to make them probability values."""
 
+print(probs[torch.arange(5), ys]); print(probs[torch.arange(5), ys].shape)
+"""Get the actual predictions of the model. Now we need to test them against the real proability distribtuion.
+Important to know that the logits that we normalize and make probabilities are not the same as the log of those
+probabilities."""
