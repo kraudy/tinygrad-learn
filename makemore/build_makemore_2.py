@@ -28,7 +28,7 @@ xs = torch.tensor(xs)
 ys = torch.tensor(ys); print(xs[:5], ys[:5])
 
 g = torch.Generator().manual_seed(2147483647)
-W = torch.randn((27, 27), generator=g)
+W = torch.randn((27, 27), generator=g, requires_grad=True)
 """(27, 1) means a neuron with vector of 27 wigths"""
 print(W.shape)
 
@@ -55,3 +55,11 @@ print(probs[torch.arange(5), ys]); print(probs[torch.arange(5), ys].shape)
 """Get the actual predictions of the model. Now we need to test them against the real proability distribtuion.
 Important to know that the logits that we normalize and make probabilities are not the same as the log of those
 probabilities."""
+
+loss = -probs[torch.arange(5), ys].log().mean()
+print(loss);
+
+W.grad = None # Zero grads
+loss.backward()
+
+
