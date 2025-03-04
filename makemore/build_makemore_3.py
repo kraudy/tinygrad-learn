@@ -25,7 +25,8 @@ for w in words[:1]:
     ys.append(ix2)
   
 xs = torch.tensor(xs)
-ys = torch.tensor(ys); print(xs[:5], ys[:5])
+ys = torch.tensor(ys)
+num = xs.nelement()
 
 g = torch.Generator().manual_seed(2147483647)
 W = torch.randn((27, 27), generator=g, requires_grad=True)
@@ -50,7 +51,9 @@ for k in range(10):
   probs = counts / counts.sum(1, keepdims=True)
   """Normalize the counts to make them probability values."""
 
-  loss = -probs[torch.arange(5), ys].log().mean()
+  loss = -probs[torch.arange(num), ys].log().mean() + 0.01*(W**2).mean()
+  """0.01*(W**2).mean() Increases the loss which in turns forces a reduction on the weigths to make them
+  smallers."""
   print(loss.item())
 
   W.grad = None # Zero grads
