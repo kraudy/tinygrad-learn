@@ -40,3 +40,10 @@ print(C[9]); print(C[22]); print(C[9])
 """Intead of using a one_hot encoding we just index the layer matrix to get out each
 index 2d representation"""
 
+emb = C[X]
+print(emb.shape)
+W1 = torch.randn(6, 100)
+b1 = torch.randn(100)
+
+emb @ W1 + b1
+
