@@ -15,11 +15,28 @@ X, Y = [], []
 for w in words[:5]:
   print(w)
   context = [0] * block_size
-  #chs = ['.'] + list(w) + ['.']
-  #for ch1, ch2 in zip(chs, chs[1:]):
   for ch in w + '.':
     ix = stoi[ch]
     X.append(context)
     Y.append(ix)
     print(''.join(itos[i] for i in context), '---->', itos[ix])
     context = context[1:] + [ix] # crop and append
+
+X = torch.tensor(X)
+Y = torch.tensor(Y)
+print(X); print(X.shape)
+print(Y); print(Y.shape)
+
+C = torch.randn(27, 2)
+"""Embedding"""
+
+print(C[5])
+print(C[X].shape)
+
+print(X[10])
+"""[ 9, 22,  9]"""
+print(C[X[10]])
+print(C[9]); print(C[22]); print(C[9])
+"""Intead of using a one_hot encoding we just index the layer matrix to get out each
+index 2d representation"""
+
