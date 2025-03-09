@@ -4,19 +4,14 @@ chars = sorted(list(set(''.join(words))))
 """Get alphabet."""
 stoi = {s:i+1 for i,s in enumerate(chars)}
 stoi['.'] = 0
-"""Letters to int. 28 Elements"""
-itos = {i:s for s,i in stoi.items()}
+"""Letters to int. 27 Elements"""
 
 import numpy as np
 import torch
 
-N = torch.ones(27, 27)
-"""27x27 Matrix since we have 27 symbols.
-Start each bytegram count as one to not get -inf on log function."""
-
 xs, ys = [], []
 
-for w in words[:1]:
+for w in words:
   chs = ['.'] + list(w) + ['.']
   for ch1, ch2 in zip(chs, chs[1:]):
     ix1 = stoi[ch1]
@@ -35,7 +30,7 @@ print(W.shape)
 
 import torch.nn.functional as F
 
-for k in range(10):
+for k in range(100):
   xenc = F.one_hot(xs, num_classes=27).float()
   """One hot encoding makes a vector of 27 elements and assign one on the element index.
   This becomes the linear representation of the input"""
