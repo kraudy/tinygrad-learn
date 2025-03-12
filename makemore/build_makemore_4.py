@@ -71,4 +71,9 @@ b2 = torch.randn(27)
 logits = (h @ W2 + b2)
 print(logits.shape)
 """[32, 27]"""
-
+counts = logits.exp()
+prob = (counts / counts.sum(1, keepdims=True))
+print(prob.shape)
+"""[32, 27]"""
+print(prob[0].sum())
+print(prob[torch.arange(32), Y])
