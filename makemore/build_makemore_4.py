@@ -21,6 +21,7 @@ for w in words[:5]:
     Y.append(ix)
     print(''.join(itos[i] for i in context), '---->', itos[ix])
     context = context[1:] + [ix] # crop and append
+    """This is like a sliding window."""
 
 X = torch.tensor(X)
 Y = torch.tensor(Y)
@@ -36,14 +37,25 @@ print(C[X].shape)
 print(X[10])
 """[ 9, 22,  9]"""
 print(C[X[10]])
+"""
+[ [ 1.2605,  0.8640], => 9
+  [-1.5719, -0.7918], => 22
+  [ 1.2605,  0.8640]  => 9 ]
+"""
 print(C[9]); print(C[22]); print(C[9])
-"""Intead of using a one_hot encoding we just index the layer matrix to get out each
+"""
+[ 1.2605,  0.8640], [-1.5719, -0.7918], [ 1.2605,  0.8640]  ]
+Intead of using a one_hot encoding we just index the layer matrix to get out each
 index 2d representation"""
 
 emb = C[X]
 print(emb.shape)
-W1 = torch.randn(6, 100)
+"""[32, 3, 2]"""
+W1 = torch.randn(3*2, 100)
+"""This means a layer with 100 neurons and 6 weigths per neuron."""
 b1 = torch.randn(100)
 
-emb @ W1 + b1
+#print(W1)
+
+#emb @ W1 + b1
 
