@@ -57,8 +57,18 @@ b1 = torch.randn(100)
 
 #print(W1)
 
-h = emb.view(32,6) @ W1 + b1
+#(32, 6)
+h = (emb.view(-1,6) @ W1 + b1).tanh()
 """A tensor is basically a 1d vector array with shapes, strides and size that describes a view which 
 determines how the data is represented."""
 print(h.shape)
+"""[32, 100]"""
+
+W2 = torch.randn(100, 27)
+"""This means a layer with 27 neurons and 100 weigths per neuron."""
+b2 = torch.randn(27)
+
+logits = (h @ W2 + b2)
+print(logits.shape)
+"""[32, 27]"""
 

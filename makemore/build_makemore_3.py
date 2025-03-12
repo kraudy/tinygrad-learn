@@ -31,6 +31,8 @@ print(W.shape)
 import torch.nn.functional as F
 
 for k in range(100):
+  """Important to note. This structure usumes logits because the layer does basically a discrete class
+  selection. So, this should be the last layer of a the network"""
   xenc = F.one_hot(xs, num_classes=27).float()
   """One hot encoding makes a vector of 27 elements and assign one on the element index.
   This becomes the linear representation of the input"""
