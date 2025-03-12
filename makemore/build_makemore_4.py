@@ -57,5 +57,8 @@ b1 = torch.randn(100)
 
 #print(W1)
 
-#emb @ W1 + b1
+h = emb.view(32,6) @ W1 + b1
+"""A tensor is basically a 1d vector array with shapes, strides and size that describes a view which 
+determines how the data is represented."""
+print(h.shape)
 
