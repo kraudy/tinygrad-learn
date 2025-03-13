@@ -8,6 +8,8 @@ stoi['.'] = 0
 itos = {i:s for s,i in stoi.items()}
 
 import torch
+import torch.nn.functional as F
+
 
 block_size = 3
 X, Y = [], []
@@ -25,8 +27,8 @@ for w in words[:5]:
 
 X = torch.tensor(X)
 Y = torch.tensor(Y)
-print(X); print(X.shape)
-print(Y); print(Y.shape)
+print(X); print(X.shape) # [32, 3]
+print(Y); print(Y.shape) # [32]
 
 g = torch.Generator().manual_seed(2147483647)
 C = torch.randn((27, 2), generator=g)
@@ -52,25 +54,25 @@ print(sum(p.nelement() for p in parameters))
 [ 1.2605,  0.8640], [-1.5719, -0.7918], [ 1.2605,  0.8640]  ]
 """
 
-emb = C[X]
-"""[32, 3, 2]
-Intead of using a one_hot encoding we just index the layer matrix to get out each
-index 2d representation"""
+for p in parameters: p.requires_grad = True
 
-#(32, 6)
-h = (emb.view(-1,6) @ W1 + b1).tanh()
-"""A tensor is basically a 1d vector array with shapes, strides and size that describes a view which 
-determines how the data is represented."""
-"""h.shape: [32, 100]"""
+for _ in range(1000):
+  emb = C[X]
+  """[32, 3, 2]
+  Intead of using a one_hot encoding we just index the layer matrix to get out each
+  index 2d representation"""
 
-logits = (h @ W2 + b2)
-"""logits.shape: [32, 27]"""
-counts = logits.exp()
-prob = (counts / counts.sum(1, keepdims=True))
-"""prob.shape: [32, 27]"""
-print(prob[0].sum()); print(prob[torch.arange(32), Y])
+  #(32, 6)
+  h = (emb.view(-1,6) @ W1 + b1).tanh()
+  """A tensor is basically a 1d vector array with shapes, strides and size that describes a view which 
+  determines how the data is represented."""
+  """h.shape: [32, 100]"""
 
-loss = - prob[torch.arange(32), Y].log().mean(); print(loss)
+  logits = (h @ W2 + b2)
+  loss = F.cross_entropy(logits, Y); 
 
+  for p in parameters: p.grad = None
+  loss.backward()
+  for p in parameters: p.data -= 0.1 * p.grad
 
-
+print(loss.item())
