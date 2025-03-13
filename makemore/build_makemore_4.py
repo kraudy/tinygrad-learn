@@ -14,21 +14,23 @@ import torch.nn.functional as F
 block_size = 3
 X, Y = [], []
 
-for w in words[:5]:
-  print(w)
+for w in words:
+  #print(w)
   context = [0] * block_size
   for ch in w + '.':
     ix = stoi[ch]
     X.append(context)
     Y.append(ix)
-    print(''.join(itos[i] for i in context), '---->', itos[ix])
+    #print(''.join(itos[i] for i in context), '---->', itos[ix])
     context = context[1:] + [ix] # crop and append
     """This is like a sliding window."""
 
 X = torch.tensor(X)
 Y = torch.tensor(Y)
-print(X); print(X.shape) # [32, 3]
-print(Y); print(Y.shape) # [32]
+#print(X); 
+print(X.shape) # [32, 3]
+#print(Y); 
+print(Y.shape) # [32]
 
 g = torch.Generator().manual_seed(2147483647)
 C = torch.randn((27, 2), generator=g)
@@ -56,8 +58,10 @@ print(sum(p.nelement() for p in parameters))
 
 for p in parameters: p.requires_grad = True
 
-for _ in range(1000):
-  emb = C[X]
+for _ in range(100):
+  #minibatch
+  ix = torch.randint(0, X.shape[0], (32, ))
+  emb = C[X[ix]]
   """[32, 3, 2]
   Intead of using a one_hot encoding we just index the layer matrix to get out each
   index 2d representation"""
@@ -69,10 +73,11 @@ for _ in range(1000):
   """h.shape: [32, 100]"""
 
   logits = (h @ W2 + b2)
-  loss = F.cross_entropy(logits, Y); 
+  loss = F.cross_entropy(logits, Y[ix]); 
+
+  print(loss.item())
 
   for p in parameters: p.grad = None
   loss.backward()
   for p in parameters: p.data -= 0.1 * p.grad
 
-print(loss.item())
