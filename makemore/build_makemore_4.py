@@ -34,6 +34,16 @@ def build_dataset(words):
   print(Y.shape) # [32]
   return X, Y
 
+import random
+random.seed(42)
+random.shuffle(words)
+n1 = int(0.8*len(words))
+n2 = int(0.9*len(words))
+
+Xtr, Ytr = build_dataset(words[:n1])
+Xdev, Ydev = build_dataset(words[n1:n2])
+Xte, Yte = build_dataset(words[n2:])
+
 X,Y = build_dataset(words)
 
 g = torch.Generator().manual_seed(2147483647)
