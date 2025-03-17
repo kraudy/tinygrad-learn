@@ -11,26 +11,30 @@ import torch
 import torch.nn.functional as F
 
 
-block_size = 3
-X, Y = [], []
+def build_dataset(words):
+  block_size = 3
+  X, Y = [], []
 
-for w in words:
-  #print(w)
-  context = [0] * block_size
-  for ch in w + '.':
-    ix = stoi[ch]
-    X.append(context)
-    Y.append(ix)
-    #print(''.join(itos[i] for i in context), '---->', itos[ix])
-    context = context[1:] + [ix] # crop and append
-    """This is like a sliding window."""
+  for w in words:
+    #print(w)
+    context = [0] * block_size
+    for ch in w + '.':
+      ix = stoi[ch]
+      X.append(context)
+      Y.append(ix)
+      #print(''.join(itos[i] for i in context), '---->', itos[ix])
+      context = context[1:] + [ix] # crop and append
+      """This is like a sliding window."""
 
-X = torch.tensor(X)
-Y = torch.tensor(Y)
-#print(X); 
-print(X.shape) # [32, 3]
-#print(Y); 
-print(Y.shape) # [32]
+  X = torch.tensor(X)
+  Y = torch.tensor(Y)
+  #print(X); 
+  print(X.shape) # [32, 3]
+  #print(Y); 
+  print(Y.shape) # [32]
+  return X, Y
+
+X,Y = build_dataset(words)
 
 g = torch.Generator().manual_seed(2147483647)
 C = torch.randn((27, 2), generator=g)
@@ -60,7 +64,7 @@ for p in parameters: p.requires_grad = True
 
 for _ in range(100):
   #minibatch
-  ix = torch.randint(0, X.shape[0], (32, ))
+  ix = torch.randint(0, X.shape[0], (32, )); #print(ix.shape)
   emb = C[X[ix]]
   """[32, 3, 2]
   Intead of using a one_hot encoding we just index the layer matrix to get out each
