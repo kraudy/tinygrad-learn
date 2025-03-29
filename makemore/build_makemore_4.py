@@ -48,17 +48,17 @@ Xte, Yte = build_dataset(words[n2:])
 #X,Y = build_dataset(words)
 
 g = torch.Generator().manual_seed(2147483647)
-C = torch.randn((27, 2), generator=g)
+C = torch.randn((27, 10), generator=g)
 """Embedding"""
-W1 = torch.randn((3*2, 300), generator=g)
-"""This means a layer with 300 neurons and 6 weigths per neuron.
+W1 = torch.randn((3*10, 200), generator=g)
+"""This means a layer with 200 neurons and 6 weigths per neuron.
 Which is kinda confusing, it would look better like
-W1 = torch.randn((300, 3*2), generator=g)
+W1 = torch.randn((200, 3*2), generator=g)
 """
-b1 = torch.randn(300, generator=g)
+b1 = torch.randn(200, generator=g)
 
-W2 = torch.randn((300, 27), generator=g)
-"""This means a layer with 27 neurons and 300 weigths per neuron."""
+W2 = torch.randn((200, 27), generator=g)
+"""This means a layer with 27 neurons and 200 weigths per neuron."""
 b2 = torch.randn(27, generator=g)
 parameters = [C, W1, b1, W2, b2]
 print(sum(p.nelement() for p in parameters))
@@ -85,7 +85,7 @@ for _ in range(10000):
   index 2d representation"""
 
   #(32, 6)
-  h = (emb.view(-1,6) @ W1 + b1).tanh()
+  h = (emb.view(-1, 3*10) @ W1 + b1).tanh()
   """A tensor is basically a 1d vector array with shapes, strides and size that describes a view which 
   determines how the data is represented."""
   """h.shape: [32, 100]"""
@@ -101,7 +101,7 @@ for _ in range(10000):
 
 
 emb = C[Xdev]
-h = torch.tanh(emb.view(-1, 6) @ W1 + b1)
+h = torch.tanh(emb.view(-1, 3*10) @ W1 + b1)
 logits = h @ W2 + b2
 loss = F.cross_entropy(logits, Ydev)
 print(loss.item())
