@@ -50,15 +50,15 @@ Xte, Yte = build_dataset(words[n2:])
 g = torch.Generator().manual_seed(2147483647)
 C = torch.randn((27, 2), generator=g)
 """Embedding"""
-W1 = torch.randn((3*2, 100), generator=g)
-"""This means a layer with 100 neurons and 6 weigths per neuron.
+W1 = torch.randn((3*2, 300), generator=g)
+"""This means a layer with 300 neurons and 6 weigths per neuron.
 Which is kinda confusing, it would look better like
-W1 = torch.randn((100, 3*2), generator=g)
+W1 = torch.randn((300, 3*2), generator=g)
 """
-b1 = torch.randn(100, generator=g)
+b1 = torch.randn(300, generator=g)
 
-W2 = torch.randn((100, 27), generator=g)
-"""This means a layer with 27 neurons and 100 weigths per neuron."""
+W2 = torch.randn((300, 27), generator=g)
+"""This means a layer with 27 neurons and 300 weigths per neuron."""
 b2 = torch.randn(27, generator=g)
 parameters = [C, W1, b1, W2, b2]
 print(sum(p.nelement() for p in parameters))
@@ -76,7 +76,7 @@ print(sum(p.nelement() for p in parameters))
 
 for p in parameters: p.requires_grad = True
 
-for _ in range(1000):
+for _ in range(10000):
   #minibatch
   ix = torch.randint(0, Xtr.shape[0], (32, )); #print(ix.shape)
   emb = C[Xtr[ix]]
