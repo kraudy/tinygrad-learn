@@ -43,14 +43,18 @@ n2 = int(0.9*len(words))
 Xtr, Ytr = build_dataset(words[:n1])
 Xdev, Ydev = build_dataset(words[n1:n2])
 Xte, Yte = build_dataset(words[n2:])
+"""Here we separate the data into 80%, 10%, 10%"""
 
-X,Y = build_dataset(words)
+#X,Y = build_dataset(words)
 
 g = torch.Generator().manual_seed(2147483647)
 C = torch.randn((27, 2), generator=g)
 """Embedding"""
 W1 = torch.randn((3*2, 100), generator=g)
-"""This means a layer with 100 neurons and 6 weigths per neuron."""
+"""This means a layer with 100 neurons and 6 weigths per neuron.
+Which is kinda confusing, it would look better like
+W1 = torch.randn((100, 3*2), generator=g)
+"""
 b1 = torch.randn(100, generator=g)
 
 W2 = torch.randn((100, 27), generator=g)
@@ -74,8 +78,8 @@ for p in parameters: p.requires_grad = True
 
 for _ in range(100):
   #minibatch
-  ix = torch.randint(0, X.shape[0], (32, )); #print(ix.shape)
-  emb = C[X[ix]]
+  ix = torch.randint(0, Xtr.shape[0], (32, )); #print(ix.shape)
+  emb = C[Xtr[ix]]
   """[32, 3, 2]
   Intead of using a one_hot encoding we just index the layer matrix to get out each
   index 2d representation"""
@@ -87,7 +91,7 @@ for _ in range(100):
   """h.shape: [32, 100]"""
 
   logits = (h @ W2 + b2)
-  loss = F.cross_entropy(logits, Y[ix]); 
+  loss = F.cross_entropy(logits, Ytr[ix]); 
 
   print(loss.item())
 
