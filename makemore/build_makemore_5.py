@@ -11,7 +11,7 @@ import torch
 import torch.nn.functional as F
 
 block_size = 4
-v_size = 10
+v_size = 30
 """Encoding feature vector size"""
 
 def build_dataset(words):
@@ -169,11 +169,32 @@ Vector size: 10
 Dev loss: 2.1790213584899902
 Test loss: 2.174254894256592
 
+=> **** Best time **** <=
+Block size: 4
+Vector size: 30
+Dev loss: 2.142103672027588
+Test loss: 2.1336076259613037
+
+Block size: 4
+Vector size: 35
+Dev loss: 2.1501615047454834
+Test loss: 2.14841890335083
+
+Block size: 4
+Vector size: 40
+Dev loss: 2.1450135707855225
+Test loss: 2.1384081840515137
+
 Model Params: 15897
 Block size: 5
 Vector size: 10
 Dev loss: 2.1916513442993164
 Test loss: 2.1935253143310547
+
+Block size: 5
+Vector size: 30
+Dev loss: 2.223001718521118
+Test loss: 2.2083425521850586
 
 ============================
 
