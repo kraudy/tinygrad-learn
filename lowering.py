@@ -1,12 +1,15 @@
 from tinygrad import Tensor
 
-a = Tensor([1,2,3])
-b = Tensor([4,5,6])
+Tensor.manual_seed(42)
 
-c = a + b
+n_symbols = 28
+v_size = 3
 
-print(c)
-"""<Tensor <UOp CLANG (3,) int (<Ops.ADD: 46>, None)> on CLANG with grad None>"""
-c.realize()
-print(c.numpy())
+words = Tensor.randint(100, low=0, high=n_symbols-1)
+"""Words as randoms int"""
+C = Tensor.randn(n_symbols, v_size)
+"""Vector representatin for each word"""
+
+print(C[words[:2]].numpy())
+
 
