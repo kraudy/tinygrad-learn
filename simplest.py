@@ -1,6 +1,9 @@
 from tinygrad import Tensor, nn
+#import pdb 
 
 Tensor.manual_seed(42)
+
+#pdb.set_trace()
 
 X = Tensor.randn(2,3)
 Y = Tensor.randint(2, low=0, high=1)
