@@ -15,6 +15,7 @@ tensory.py
 
 ops.py
   (315)shape()
+  (289)st()
 
 helpers.py
   (60)unwrap()
@@ -31,7 +32,9 @@ UOp(Ops.VIEW, dtypes.uint, arg=ShapeTracker(views=(View(shape=(2,), strides=(1,)
     UOp(Ops.BUFFER, dtypes.uint, arg=(0, 2), src=(
       UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),))
 
-      
+(Pdb) self.op
+<Ops.SHRINK: 18>
+         
 (Pdb) self
 ShapeTracker(views=(View(shape=(2,), strides=(1,), offset=0, mask=None, contiguous=True),))
 Pdb) self.views
