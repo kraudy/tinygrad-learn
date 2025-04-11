@@ -53,4 +53,19 @@ Pdb) self.views
 (Pdb) type(self.views)
 <class 'tuple'>
 
+
+UOp(Ops.CONST, dtypes.uint, arg=1, src=(
+  UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),))
+
+> /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(138)__init__()
+-> if dtype is not None: dtype = to_dtype(dtype)
+(Pdb) self
+*** AttributeError: 'Tensor' object has no attribute 'lazydata'
+(Pdb) data
+UOp(Ops.RESHAPE, dtypes.uint, arg=(1,), src=(
+  UOp(Ops.CONST, dtypes.uint, arg=1, src=(
+    UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+      UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),))
+      
 """
