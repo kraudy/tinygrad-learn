@@ -67,5 +67,29 @@ UOp(Ops.RESHAPE, dtypes.uint, arg=(1,), src=(
   UOp(Ops.CONST, dtypes.uint, arg=1, src=(
     UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
       UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),))
-      
+
+/home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(572)full()-><Tensor <UOp ...ith grad None>
+-> return Tensor(fill_value, **kwargs).reshape((1, )*len(new_shape := argfix(shape))).expand(new_shape)    
+
+full() is the last function on Tensor
+transpose()
+permute()
+tensor()
+pool()
+apply_uop()
+flatten()
+add()
+tensor.py(3900)_wrapper()
+ops.py(44)__add__()
+tensor.py(3900)_wrapper()
+tensor.py(537)rand()
+tensor.py(3900)_wrapper()
+tensor.py(492)_threefry_random_bits()
+tensor.py(3713)cast()
+dtype.py(156)to_dtype()
+tensor.py(190)_apply_uop()
+-> new_uop: UOp = fxn(*[t.lazydata for t in (self,)+x], **kwargs)
+
+rand()
+
 """
