@@ -96,7 +96,41 @@ rand()
 -> return Tensor(fill_value, **kwargs).reshape((1, )*len(new_shape := argfix(shape))).expand(new_shape)
 
 
+This _apply_uop () Is used a lot in the tensor.py
 
+So, this thing returns a created Tensor
+
+> /home/kraudy/tinygrad/tinygrad/tinygrad/ops.py(235)__call__()
+-> return created
+(Pdb) created
+UOp(Ops.BITCAST, dtypes.uint, arg=None, src=(
+  UOp(Ops.EXPAND, dtypes.float, arg=(6,), src=(
+    UOp(Ops.RESHAPE, dtypes.float, arg=(1,), src=(
+      UOp(Ops.CONST, dtypes.float, arg=1.0, src=(
+        UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+          UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),)),)),))
+
+(Pdb) p s
+UOp(Ops.EXPAND, dtypes.float, arg=(6,), src=(
+  UOp(Ops.RESHAPE, dtypes.float, arg=(1,), src=(
+    UOp(Ops.CONST, dtypes.float, arg=1.0, src=(
+      UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+        UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),)),))
+(Pdb) p s.src
+(UOp(Ops.RESHAPE, dtypes.float, arg=(1,), src=(
+  UOp(Ops.CONST, dtypes.float, arg=1.0, src=(
+    UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+      UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),)),)
+
+-> def _apply_broadcasted_uop(self, fxn:Callable, x:Union[Tensor, ConstType], reverse=False) -> Tensor:
+(Pdb) type(self)
+<class 'tinygrad.tensor.Tensor'>
+(Pdb) self.lazydata
+UOp(Ops.EXPAND, dtypes.float, arg=(6,), src=(
+  UOp(Ops.RESHAPE, dtypes.float, arg=(1,), src=(
+    UOp(Ops.CONST, dtypes.float, arg=1.0, src=(
+      UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+        UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),)),))     
 """
 
 
