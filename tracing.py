@@ -138,7 +138,29 @@ After all that, finally back
 (Pdb) src
 <Tensor <UOp CLANG (2, 3) float (<Ops.CONTIGUOUS: 2>, None)> on CLANG with grad None>
 
+All the Tensor operations use _apply_uop() then _wrapper() and some operations.
+Or do _wrapper() and some operation: sub(), _wrapper(), __rsub__() 
+That is interesting.
 
+Most operations are a done by a base operation plus some aditional operation
+
+We need to understand _apply_uop() and _wrapper()
+
+> /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(762)randn()-><Tensor <UOp ...ith grad None>
+-> return (src[0].mul(2*math.pi).cos().mul((1 - src[1]).log().mul(-2).sqrt()).cast(dtype or dtypes.default_float)).requires_grad_(requires_grad)
+(Pdb) n
+
+This is the last
+> /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(3927)_wrapper()
+-> return ret
+> /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(3927)_wrapper()-><Tensor <UOp ...ith grad None>
+-> return ret
+(Pdb) ret
+<Tensor <UOp CLANG (3,) float (<Ops.MUL: 47>, None)> on CLANG with grad None>
+
+Try making a simple tensor like 
+Tensor([1., 2., 3., 4.])
+to follow the trace
 
 """
 
