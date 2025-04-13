@@ -131,6 +131,15 @@ UOp(Ops.EXPAND, dtypes.float, arg=(6,), src=(
     UOp(Ops.CONST, dtypes.float, arg=1.0, src=(
       UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
         UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),)),))     
+
+After all that, finally back
+> /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(762)randn()
+-> return (src[0].mul(2*math.pi).cos().mul((1 - src[1]).log().mul(-2).sqrt()).cast(dtype or dtypes.default_float)).requires_grad_(requires_grad)
+(Pdb) src
+<Tensor <UOp CLANG (2, 3) float (<Ops.CONTIGUOUS: 2>, None)> on CLANG with grad None>
+
+
+
 """
 
 
