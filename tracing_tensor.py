@@ -77,7 +77,23 @@ data = struct.pack(f"@{ret.size}{dtype.fmt}", *[truncate_function(xi) for xi in 
 (Pdb) data
 b'\x00\x00\x80?\x00\x00\x00@\x00\x00@@\x00\x00\x80@'
 
+After the correspoding path data has to be converted to a UOp
+So all the previous options are to convert the data to a UOp
 
 
+So this is the operations Graph, that is why they use tupple because each node has at max
+2 parents and this also helps the toposort algorithm
+
+(Pdb) data
+UOp(Ops.VIEW, dtypes.float, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+  UOp(Ops.BUFFER, dtypes.float, arg=(2, 4), src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),))
+(Pdb) data.src[0]
+UOp(Ops.BUFFER, dtypes.float, arg=(2, 4), src=(
+  UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),))
+(Pdb) data.src[0].src[0]
+UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=())
+(Pdb) data.src[0].src[0].src
+()
 
 """
