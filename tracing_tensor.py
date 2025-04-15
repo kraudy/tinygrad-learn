@@ -48,4 +48,36 @@ tensors where turned to Uops
 -> else: data = _frompy(data, dtype)
   /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(76)_frompy()
 
+Looks like it needs the Uops to crate the views of the tensor
+
+UOp can be called 
+
+(Pdb) w
+  /home/kraudy/tinygrad/tinygrad-learn/tracing_tensor.py(4)<module>()
+-> a = Tensor([1., 2., 3., 4.])
+  /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(165)__init__()
+-> else: data = _frompy(data, dtype)
+  /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(76)_frompy()
+-> ret = UOp.metaop(Ops.EMPTY, get_shape(x), dtype, "PYTHON")
+  /home/kraudy/tinygrad/tinygrad/tinygrad/ops.py(494)metaop()
+-> return UOp(Ops.VIEW, dtype, (UOp.new_buffer(device, (st:=ShapeTracker.from_shape(shape)).size, dtype),), st)
+  /home/kraudy/tinygrad/tinygrad/tinygrad/ops.py(535)new_buffer()
+-> def new_buffer(device:str, size:int, dtype:DType): return UOp(Ops.BUFFER, dtype, (UOp(Ops.DEVICE, arg=device),), (next(UOp.buffer_num), size))
+> /home/kraudy/tinygrad/tinygrad/tinygrad/ops.py(235)__call__()
+-> return created
+
+Got back to _frompy()
+(Pdb) ret
+UOp(Ops.VIEW, dtypes.float, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+  UOp(Ops.BUFFER, dtypes.float, arg=(2, 4), src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),))
+ 
+Looks like it does some hex conversion
+data = struct.pack(f"@{ret.size}{dtype.fmt}", *[truncate_function(xi) for xi in fully_flatten(x)])
+(Pdb) data
+b'\x00\x00\x80?\x00\x00\x00@\x00\x00@@\x00\x00\x80@'
+
+
+
+
 """
