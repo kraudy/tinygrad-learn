@@ -96,4 +96,13 @@ UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=())
 (Pdb) data.src[0].src[0].src
 ()
 
+Lazydata is of type UOp
+
+Copying data from device PYTHON to CLANG
+(Pdb) ret
+UOp(Ops.COPY, dtypes.float, arg=False, src=(
+  UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+  UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),))
+
 """
