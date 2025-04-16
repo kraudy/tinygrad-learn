@@ -105,4 +105,56 @@ UOp(Ops.COPY, dtypes.float, arg=False, src=(
   UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
     UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),))
 
+    
+(Pdb) n
+> /home/kraudy/tinygrad/tinygrad/tinygrad/ops.py(233)__call__()
+-> for s in src: s.children.add(ref)
+(Pdb) src
+(UOp(Ops.VIEW, dtypes.int, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+  UOp(Ops.COPY, dtypes.int, arg=False, src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+    UOp(Ops.BUFFER, dtypes.int, arg=(0, 4), src=(
+      UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),)), UOp(Ops.EXPAND, dtypes.int, arg=(4,), src=(
+  UOp(Ops.RESHAPE, dtypes.int, arg=(1,), src=(
+    UOp(Ops.CONST, dtypes.int, arg=5, src=(
+      UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+        UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),)),)))
+
+
+CALL Stack
+        
+/home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(3923)_wrapper()
+-> ret = fn(*args, **kwargs)
+  /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(3103)add()
+-> return self._apply_broadcasted_uop(UOp.add, x, reverse)
+  /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(3898)_wrapper()
+-> if _METADATA.get() is not None: return fn(*args, **kwargs)
+  /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(194)_apply_broadcasted_uop()
+-> return lhs._apply_uop(fxn, rhs)
+  /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(3898)_wrapper()
+-> if _METADATA.get() is not None: return fn(*args, **kwargs)
+  /home/kraudy/tinygrad/tinygrad/tinygrad/tensor.py(188)_apply_uop()
+-> new_uop: UOp = fxn(*[t.lazydata for t in (self,)+x], **kwargs)
+  /home/kraudy/tinygrad/tinygrad/tinygrad/ops.py(37)add()
+-> return self._binop(Ops.ADD, x, reverse)
+  /home/kraudy/tinygrad/tinygrad/tinygrad/ops.py(29)_binop()
+-> def _binop(self, op, x, reverse): return self.ufix(x).alu(op, self) if reverse else self.alu(op, self.ufix(x))
+  /home/kraudy/tinygrad/tinygrad/tinygrad/ops.py(391)alu()
+-> return UOp(arg, out_dtype, (self,)+src)
+> /home/kraudy/tinygrad/tinygrad/tinygrad/ops.py(240)__call__()->UOp(Ops.ADD, ...)),)),)),)),))
+-> return created
+
+(Pdb) created
+UOp(Ops.ADD, dtypes.int, arg=None, src=(
+  UOp(Ops.VIEW, dtypes.int, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+    UOp(Ops.COPY, dtypes.int, arg=False, src=(
+      x2:=UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+      UOp(Ops.BUFFER, dtypes.int, arg=(0, 4), src=(
+        UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),)),
+  UOp(Ops.EXPAND, dtypes.int, arg=(4,), src=(
+    UOp(Ops.RESHAPE, dtypes.int, arg=(1,), src=(
+      UOp(Ops.CONST, dtypes.int, arg=5, src=(
+        UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+           x2,)),)),)),)),))
+
 """
