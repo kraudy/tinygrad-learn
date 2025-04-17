@@ -80,4 +80,60 @@ Some nice recursion call stack
   UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
     UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)): None}
 
+
+(Pdb) cache
+{UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()), UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()), UOp(Ops.COPY, dtypes.float, arg=False, src=(
+  UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+  UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)), UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+  UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),))}
+
+(Pdb) nodes
+{UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()): None, UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()): None, UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+  UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)): None, UOp(Ops.COPY, dtypes.float, arg=False, src=(
+  UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+  UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)): None, UOp(Ops.VIEW, dtypes.float, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+  UOp(Ops.COPY, dtypes.float, arg=False, src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+    UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+      UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),)): None}
+
+(Pdb) nodes
+{UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()): None, UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()): None, UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+  UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)): None, UOp(Ops.COPY, dtypes.float, arg=False, src=(
+  UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+  UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)): None, UOp(Ops.VIEW, dtypes.float, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+  UOp(Ops.COPY, dtypes.float, arg=False, src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+    UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+      UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),)): None, UOp(Ops.REDUCE_AXIS, dtypes.float, arg=(Ops.ADD, (0,)), src=(
+  UOp(Ops.VIEW, dtypes.float, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+    UOp(Ops.COPY, dtypes.float, arg=False, src=(
+      UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+      UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+        UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),)),)): None}      
+
+(Pdb) all_uops
+{UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()): None, UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()): None, UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+  UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)): None, UOp(Ops.COPY, dtypes.float, arg=False, src=(
+  UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+  UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)): None, UOp(Ops.VIEW, dtypes.float, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+  UOp(Ops.COPY, dtypes.float, arg=False, src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+    UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+      UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),)): None, UOp(Ops.REDUCE_AXIS, dtypes.float, arg=(Ops.ADD, (0,)), src=(
+  UOp(Ops.VIEW, dtypes.float, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+    UOp(Ops.COPY, dtypes.float, arg=False, src=(
+      UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+      UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+        UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),)),)): None, UOp(Ops.RESHAPE, dtypes.float, arg=(), src=(
+  UOp(Ops.REDUCE_AXIS, dtypes.float, arg=(Ops.ADD, (0,)), src=(
+    UOp(Ops.VIEW, dtypes.float, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+      UOp(Ops.COPY, dtypes.float, arg=False, src=(
+        UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+        UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+          UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),)),)),)): None}        
 """
