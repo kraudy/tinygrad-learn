@@ -158,3 +158,17 @@ UOp(Ops.ADD, dtypes.int, arg=None, src=(
            x2,)),)),)),)),))
 
 """
+
+"""
+Tracing numpy()
+
+So the actual numpy array is pop up from the metadata
+    token = _METADATA.set(Metadata(name=fn.__name__, caller=caller))
+    ret = fn(*args, **kwargs)
+    _METADATA.reset(token)
+    return ret
+  return _wrapper
+(Pdb) ret
+array([1, 2, 3, 4], dtype=int32)
+
+"""
