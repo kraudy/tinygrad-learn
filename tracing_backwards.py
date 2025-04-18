@@ -136,4 +136,47 @@ Some nice recursion call stack
         UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
         UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
           UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),)),)),)): None}        
+
+Remember that gradients are tensors.
+if gradient is None: gradient = Tensor(1.0, dtype=self.dtype, device=self.device, requires_grad=False)          
+
+(Pdb) gradient
+<Tensor <UOp CLANG () float (<Ops.CONST: 72>, None)> on CLANG with grad None>
+
+These are the built grads
+(Pdb) grads
+{UOp(Ops.RESHAPE, dtypes.float, arg=(), src=(
+  UOp(Ops.REDUCE_AXIS, dtypes.float, arg=(Ops.ADD, (0,)), src=(
+    UOp(Ops.VIEW, dtypes.float, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+      UOp(Ops.COPY, dtypes.float, arg=False, src=(
+        UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+        UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+          UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),)),)),)): UOp(Ops.CONST, dtypes.float, arg=1.0, src=(
+  UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)), UOp(Ops.REDUCE_AXIS, dtypes.float, arg=(Ops.ADD, (0,)), src=(
+  UOp(Ops.VIEW, dtypes.float, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+    UOp(Ops.COPY, dtypes.float, arg=False, src=(
+      UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+      UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+        UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),)),)): UOp(Ops.RESHAPE, dtypes.float, arg=(1,), src=(
+  UOp(Ops.CONST, dtypes.float, arg=1.0, src=(
+    UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+      UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),)), UOp(Ops.VIEW, dtypes.float, arg=ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),)), src=(
+  UOp(Ops.COPY, dtypes.float, arg=False, src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),
+    UOp(Ops.BUFFER, dtypes.float, arg=(0, 4), src=(
+      UOp(Ops.DEVICE, dtypes.void, arg='PYTHON', src=()),)),)),)): UOp(Ops.EXPAND, dtypes.float, arg=(4,), src=(
+  UOp(Ops.RESHAPE, dtypes.float, arg=(1,), src=(
+    UOp(Ops.CONST, dtypes.float, arg=1.0, src=(
+      UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+        UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),)),))}
+
+        
+[UOp(Ops.EXPAND, dtypes.float, arg=(4,), src=(
+  UOp(Ops.RESHAPE, dtypes.float, arg=(1,), src=(
+    UOp(Ops.CONST, dtypes.float, arg=1.0, src=(
+      UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+        UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),)),)), UOp(Ops.CONST, dtypes.float, arg=1.0, src=(
+  UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+    UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),))]        
 """
