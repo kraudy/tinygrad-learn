@@ -179,4 +179,16 @@ These are the built grads
         UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),)),)), UOp(Ops.CONST, dtypes.float, arg=1.0, src=(
   UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
     UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),))]        
+
+
+This is the Tensor after Backwards
+  4     t = Tensor([1.0, 2.0, 3.0, 4.0], requires_grad=True)
+  5  -> t.sum().backward()
+[EOF]
+(Pdb) t
+<Tensor <UOp CLANG (4,) float ShapeTracker(views=(View(shape=(4,), strides=(1,), offset=0, mask=None, contiguous=True),))> on CLANG with grad UOp(Ops.EXPAND, dtypes.float, arg=(4,), src=(
+  UOp(Ops.RESHAPE, dtypes.float, arg=(1,), src=(
+    UOp(Ops.CONST, dtypes.float, arg=1.0, src=(
+      UOp(Ops.VIEW, dtypes.void, arg=ShapeTracker(views=(View(shape=(), strides=(), offset=0, mask=None, contiguous=True),)), src=(
+        UOp(Ops.DEVICE, dtypes.void, arg='CLANG', src=()),)),)),)),))>    
 """
