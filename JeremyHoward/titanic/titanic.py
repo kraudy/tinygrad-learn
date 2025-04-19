@@ -30,7 +30,7 @@ X = Tensor(X.values)
 Y = Tensor(Y.values).one_hot(classes)
 """Tensfor from 'numpy.ndarray'"""
 
-L1_neurons = 24 #make it 100
+L1_neurons = 50 #make it 100
 W1 = Tensor.randn(x_cols, L1_neurons)
 b1 = Tensor.randn(L1_neurons)
 
@@ -40,15 +40,23 @@ b2 = Tensor.randn(L2_neurons)
 """Defined network"""
 
 params = [X, W1, b1, W2, b2]
-lr = 0.1 #validate
+lr = 0.001 #validate
 optim = nn.optim.SGD(params, lr)
 """Optimizer"""
 
-logits = X.matmul(W1).add(b1).tanh() # check relu, sigmoid, etc
-loss = logits.matmul(W2).add(b2).cross_entropy(Y)
+for i in range(101):
+  Tensor.training=True
 
-#zero grads
+  logits = X.matmul(W1).add(b1).relu()#.tanh() # check relu, sigmoid, etc
+  loss = logits.matmul(W2).add(b2).cross_entropy(Y)
 
-#backward
+  #zero grads
+  optim.zero_grad()
 
-# update
+  #backward
+  loss.backward()
+
+  # update
+  optim.step()
+
+  if i % 10 == 0 : print(f"Loss: {loss.numpy()}")
