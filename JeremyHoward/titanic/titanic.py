@@ -33,13 +33,13 @@ All columns
        'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
 """
 
-x_cols = len(X.columns)
+x_cols = X.shape[1]
 """6"""
 classes = 2
 
 X = Tensor(X.values, dtype='float32')
 Y = Tensor(Y.values.flatten(), dtype='int32').one_hot(classes)
-"""Tensfor from 'numpy.ndarray'"""
+"""Tensor from 'numpy.ndarray'"""
 print(Y.shape)
 
 L1_neurons = 50 #make it 100
@@ -56,19 +56,62 @@ lr = 0.01 #validate
 optim = nn.optim.SGD(params, lr)
 """Optimizer"""
 
-for i in range(101):
+num_epochs = 101
+batch_size = 32
+
+for epoch in range(num_epochs):
   Tensor.training=True
 
-  logits = X.matmul(W1).add(b1).relu()#.tanh() # check relu, sigmoid, etc
-  loss = logits.matmul(W2).add(b2).cross_entropy(Y)
+  indices = np.random.permutation(X.shape[0])
+  """This just give us the indexes numbers from 0 to X.shape[0]
+  in random order, which we'll use to sample"""
 
-  #zero grads
-  optim.zero_grad()
+  for i in range(0, X.shape[0], batch_size):
+    """This is like a sliding window of indixes"""
+    batch_idx = indices[i: i+batch_size].tolist()
+    X_batch = X[batch_idx]
+    Y_batch = Y[batch_idx]
 
-  #backward
-  loss.backward()
 
-  # update
-  optim.step()
+    logits = X_batch.matmul(W1).add(b1).tanh() # check relu, sigmoid, etc
+    #logits = X.matmul(W1).add(b1).relu()
+    loss = logits.matmul(W2).add(b2).cross_entropy(Y_batch)
 
-  if i % 10 == 0 : print(f"Loss: {loss.numpy()}")
+    #zero grads
+    optim.zero_grad()
+
+    #backward
+    loss.backward()
+
+    # update
+    optim.step()
+
+  if epoch % 10 == 0 : print(f"Loss: {loss.numpy()}")
+
+"""
+Relu
+Loss: 2.5989575386047363
+Loss: 1.7362608909606934
+Loss: 1.3206514120101929
+Loss: 1.1132731437683105
+Loss: 0.9956077933311462
+Loss: 0.9190303683280945
+Loss: 0.8678664565086365
+Loss: 0.8322211503982544
+Loss: 0.8064774870872498
+Loss: 0.78732830286026
+Loss: 0.771884024143219
+
+Tanh
+Loss: 1.1645634174346924
+Loss: 0.3553141951560974
+Loss: 0.29564711451530457
+Loss: 0.4266332685947418
+Loss: 0.5494696497917175
+Loss: 0.2601075768470764
+Loss: 0.4603317379951477
+Loss: 0.22537310421466827
+Loss: 0.6060318946838379
+Loss: 0.25036874413490295
+Loss: 0.39255309104919434
+"""
