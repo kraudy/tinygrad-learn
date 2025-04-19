@@ -17,6 +17,10 @@ X['Fare'] = X['Fare'].fillna(X['Fare'].median())
 
 X['Sex'] = X['Sex'].replace({'male':1, "female":2})
 """Sex to numeric"""
+
+X = (X - X.mean()) / X.std()
+"""Normalizing data"""
+
 print(X.head())
 
 Y = pd.read_csv("./train.csv", usecols=['Survived'])
@@ -33,9 +37,10 @@ x_cols = len(X.columns)
 """6"""
 classes = 2
 
-X = Tensor(X.values)
-Y = Tensor(Y.values).one_hot(classes)
+X = Tensor(X.values, dtype='float32')
+Y = Tensor(Y.values.flatten(), dtype='int32').one_hot(classes)
 """Tensfor from 'numpy.ndarray'"""
+print(Y.shape)
 
 L1_neurons = 50 #make it 100
 W1 = Tensor.randn(x_cols, L1_neurons)
@@ -47,7 +52,7 @@ b2 = Tensor.randn(L2_neurons)
 """Defined network"""
 
 params = [W1, b1, W2, b2]
-lr = 0.001 #validate
+lr = 0.01 #validate
 optim = nn.optim.SGD(params, lr)
 """Optimizer"""
 
