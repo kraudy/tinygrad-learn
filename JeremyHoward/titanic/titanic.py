@@ -1,10 +1,11 @@
 """
 Classic Titanic https://www.kaggle.com/competitions/titanic/overview
 """
-from tinygrad import Tensor, nn
+from tinygrad import Tensor, nn, TinyJit
 import numpy as np
 import pandas as pd
 import pdb
+import time
 
 #pdb.set_trace()
 
@@ -59,7 +60,11 @@ optim = nn.optim.SGD(params, lr)
 num_epochs = 101
 batch_size = 32
 
+
+s = time.time()
+
 for epoch in range(num_epochs):
+
   Tensor.training=True
 
   indices = np.random.permutation(X.shape[0])
@@ -73,9 +78,10 @@ for epoch in range(num_epochs):
     Y_batch = Y[batch_idx]
 
 
-    logits = X_batch.matmul(W1).add(b1).tanh() # check relu, sigmoid, etc
-    #logits = X.matmul(W1).add(b1).relu()
-    loss = logits.matmul(W2).add(b2).cross_entropy(Y_batch)
+    #logits = X_batch.matmul(W1).add(b1).tanh() # check relu, sigmoid, etc
+    #logits = X_batch.matmul(W1).add(b1).relu()
+    logits = X_batch.matmul(W1).add(b1).relu().matmul(W2).add(b2)
+    loss = logits.cross_entropy(Y_batch)
 
     #zero grads
     optim.zero_grad()
@@ -86,21 +92,30 @@ for epoch in range(num_epochs):
     # update
     optim.step()
 
-  if epoch % 10 == 0 : print(f"Loss: {loss.numpy()}")
+  if epoch % 10 == 0 : print(f"Epoch {epoch}, Loss: {loss.numpy()}")
+
+e = time.time()
+print(f"took {(e-s)*1000:.2f}ms")
+
+@TinyJit
+def forward(X: Tensor) -> Tensor:
+  return X.matmul(W1).add(b1).relu().matmul(W2).add(b2)
+ 
+# Do inference
 
 """
 Relu
-Loss: 2.5989575386047363
-Loss: 1.7362608909606934
-Loss: 1.3206514120101929
-Loss: 1.1132731437683105
-Loss: 0.9956077933311462
-Loss: 0.9190303683280945
-Loss: 0.8678664565086365
-Loss: 0.8322211503982544
-Loss: 0.8064774870872498
-Loss: 0.78732830286026
-Loss: 0.771884024143219
+Epoch 0, Loss: 6.285268783569336
+Epoch 10, Loss: 0.9767337441444397
+Epoch 20, Loss: 0.667522132396698
+Epoch 30, Loss: 0.4770074486732483
+Epoch 40, Loss: 0.5852214097976685
+Epoch 50, Loss: 0.34624993801116943
+Epoch 60, Loss: 0.7595096826553345
+Epoch 70, Loss: 0.47017794847488403
+Epoch 80, Loss: 0.3741145431995392
+Epoch 90, Loss: 0.5492170453071594
+Epoch 100, Loss: 0.34869301319122314
 
 Tanh
 Loss: 1.1645634174346924
