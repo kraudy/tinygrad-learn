@@ -9,7 +9,14 @@ import pdb
 #pdb.set_trace()
 
 X = pd.read_csv("./train.csv", usecols=['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare'])
+"""Get data"""
+
+X['Age'] = X['Age'].fillna(X['Age'].median())
+X['Fare'] = X['Fare'].fillna(X['Fare'].median())
+"""Handling NaN"""
+
 X['Sex'] = X['Sex'].replace({'male':1, "female":2})
+"""Sex to numeric"""
 print(X.head())
 
 Y = pd.read_csv("./train.csv", usecols=['Survived'])
@@ -39,7 +46,7 @@ W2 = Tensor.randn(L1_neurons, L2_neurons)
 b2 = Tensor.randn(L2_neurons)
 """Defined network"""
 
-params = [X, W1, b1, W2, b2]
+params = [W1, b1, W2, b2]
 lr = 0.001 #validate
 optim = nn.optim.SGD(params, lr)
 """Optimizer"""
