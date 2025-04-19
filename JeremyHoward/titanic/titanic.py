@@ -43,6 +43,29 @@ Y = Tensor(Y.values.flatten(), dtype='int32').one_hot(classes)
 """Tensor from 'numpy.ndarray'"""
 print(Y.shape)
 
+class Model:
+  def __init__(self):
+    self.L1_neurons = 50
+    self.W1 = Tensor.randn(x_cols, self.L1_neurons)
+    self.b1 = Tensor.randn(self.L1_neurons)
+
+    self.L2_neurons = 2
+    self.W2 = Tensor.randn(self.L1_neurons, self.L2_neurons)
+    self.b2 = Tensor.randn(self.L2_neurons)
+  
+  # def training
+
+class M_relu(Model):
+  def __init__(self):
+    super().__init__()
+    # Define weigths for RELU
+  
+  def __call__(self, X: Tensor) ->Tensor:
+    # return logits
+    return X.matmul(self.W1).add(self.b1).relu().matmul(self.W2).add(self.b2)
+
+RELU = M_relu()
+
 L1_neurons = 50 #make it 100
 W1 = Tensor.randn(x_cols, L1_neurons)
 b1 = Tensor.randn(L1_neurons)
@@ -52,19 +75,18 @@ W2 = Tensor.randn(L1_neurons, L2_neurons)
 b2 = Tensor.randn(L2_neurons)
 """Defined network"""
 
-params = [W1, b1, W2, b2]
+#params = [W1, b1, W2, b2]
 lr = 0.01 #validate
-optim = nn.optim.SGD(params, lr)
+#optim = nn.optim.SGD(params, lr)
+optim = nn.optim.SGD(nn.state.get_parameters(RELU), lr)
 """Optimizer"""
 
 num_epochs = 101
 batch_size = 32
 
-
 s = time.time()
 
 for epoch in range(num_epochs):
-
   Tensor.training=True
 
   indices = np.random.permutation(X.shape[0])
@@ -77,11 +99,12 @@ for epoch in range(num_epochs):
     X_batch = X[batch_idx]
     Y_batch = Y[batch_idx]
 
-
     #logits = X_batch.matmul(W1).add(b1).tanh() # check relu, sigmoid, etc
     #logits = X_batch.matmul(W1).add(b1).relu()
-    logits = X_batch.matmul(W1).add(b1).relu().matmul(W2).add(b2)
-    loss = logits.cross_entropy(Y_batch)
+
+    #logits = X_batch.matmul(W1).add(b1).relu().matmul(W2).add(b2)
+    #loss = logits.cross_entropy(Y_batch)
+    loss = RELU(X_batch).cross_entropy(Y_batch)
 
     #zero grads
     optim.zero_grad()
