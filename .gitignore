@@ -175,3 +175,5 @@ cython_debug/
 
 # Data
 *.csv
+*.mp4
+*.txt
