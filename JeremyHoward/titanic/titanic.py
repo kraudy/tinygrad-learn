@@ -59,6 +59,8 @@ class M_relu(Model):
   def __init__(self):
     super().__init__()
     # Define weigths for RELU
+    self.W1 *= (2 / x_cols)**0.5 
+    self.W2 *= (2 / self.L1_neurons)**0.5
   
   def __call__(self, X: Tensor) ->Tensor:
     # return logits
@@ -128,17 +130,18 @@ def forward(X: Tensor) -> Tensor:
 
 """
 Relu
-Epoch 0, Loss: 6.285268783569336
-Epoch 10, Loss: 0.9767337441444397
-Epoch 20, Loss: 0.667522132396698
-Epoch 30, Loss: 0.4770074486732483
-Epoch 40, Loss: 0.5852214097976685
-Epoch 50, Loss: 0.34624993801116943
-Epoch 60, Loss: 0.7595096826553345
-Epoch 70, Loss: 0.47017794847488403
-Epoch 80, Loss: 0.3741145431995392
-Epoch 90, Loss: 0.5492170453071594
-Epoch 100, Loss: 0.34869301319122314
+Epoch 0, Loss: 0.6348017454147339
+Epoch 10, Loss: 0.6610940098762512
+Epoch 20, Loss: 0.7582830786705017
+Epoch 30, Loss: 0.3846035301685333
+Epoch 40, Loss: 0.40201857686042786
+Epoch 50, Loss: 0.5522032380104065
+Epoch 60, Loss: 0.37767961621284485
+Epoch 70, Loss: 0.3409600853919983
+Epoch 80, Loss: 0.4008735120296478
+Epoch 90, Loss: 0.38173627853393555
+Epoch 100, Loss: 0.40271297097206116
+took 156111.51ms
 
 Tanh
 Loss: 1.1645634174346924
