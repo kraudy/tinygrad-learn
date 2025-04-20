@@ -47,11 +47,11 @@ class Model:
   def __init__(self):
     self.L1_neurons = 50
     self.W1 = Tensor.randn(x_cols, self.L1_neurons)
-    self.b1 = Tensor.randn(self.L1_neurons)
+    self.b1 = Tensor.zeros(self.L1_neurons)
 
     self.L2_neurons = 2
     self.W2 = Tensor.randn(self.L1_neurons, self.L2_neurons)
-    self.b2 = Tensor.randn(self.L2_neurons)
+    self.b2 = Tensor.zeros(self.L2_neurons)
   
   # def training
 
@@ -68,7 +68,10 @@ class M_relu(Model):
 
 class M_tanh(Model):
   def __init__(self):
-      super().__init__()
+    super().__init__()
+    # Define weigths for TANH
+    self.W1 *= (1 / x_cols)**0.5 
+    self.W2 *= (1 / self.L1_neurons)**0.5
   
   def __call__(self, X: Tensor) ->Tensor:
     # return logits
@@ -154,4 +157,56 @@ Epoch 90, SGD | Loss TANH: 0.3348316252231598
 Epoch 100, SGD | Loss RELU: 0.3779715895652771
 Epoch 100, SGD | Loss TANH: 0.34364986419677734
 took 222516.03ms
+
+Bias to Zero
+Epoch 0, SGD | Loss RELU: 0.4649984836578369
+Epoch 0, SGD | Loss TANH: 0.6744505167007446
+Epoch 10, SGD | Loss RELU: 0.4090166389942169
+Epoch 10, SGD | Loss TANH: 0.40580445528030396
+Epoch 20, SGD | Loss RELU: 0.41389477252960205
+Epoch 20, SGD | Loss TANH: 0.388142466545105
+Epoch 30, SGD | Loss RELU: 0.4087371826171875
+Epoch 30, SGD | Loss TANH: 0.35230016708374023
+Epoch 40, SGD | Loss RELU: 0.4085529148578644
+Epoch 40, SGD | Loss TANH: 0.33915606141090393
+Epoch 50, SGD | Loss RELU: 0.39890801906585693
+Epoch 50, SGD | Loss TANH: 0.354353129863739
+Epoch 60, SGD | Loss RELU: 0.3790639638900757
+Epoch 60, SGD | Loss TANH: 0.33305278420448303
+Epoch 70, SGD | Loss RELU: 0.37915492057800293
+Epoch 70, SGD | Loss TANH: 0.3537832498550415
+Epoch 80, SGD | Loss RELU: 0.37857958674430847
+Epoch 80, SGD | Loss TANH: 0.32952880859375
+Epoch 90, SGD | Loss RELU: 0.3717404007911682
+Epoch 90, SGD | Loss TANH: 0.3393588960170746
+Epoch 100, SGD | Loss RELU: 0.3680575489997864
+Epoch 100, SGD | Loss TANH: 0.3238118588924408
+took 210297.77ms
+
+Tanh weigth regularization 
+Epoch 0, SGD | Loss RELU: 0.4452938735485077
+Epoch 0, SGD | Loss TANH: 0.4436724781990051
+Epoch 10, SGD | Loss RELU: 0.40936824679374695
+Epoch 10, SGD | Loss TANH: 0.41842639446258545
+Epoch 20, SGD | Loss RELU: 0.3979603350162506
+Epoch 20, SGD | Loss TANH: 0.4023357331752777
+Epoch 30, SGD | Loss RELU: 0.39638784527778625
+Epoch 30, SGD | Loss TANH: 0.39808332920074463
+Epoch 40, SGD | Loss RELU: 0.37979522347450256
+Epoch 40, SGD | Loss TANH: 0.38466495275497437
+Epoch 50, SGD | Loss RELU: 0.3759876489639282
+Epoch 50, SGD | Loss TANH: 0.37975436449050903
+Epoch 60, SGD | Loss RELU: 0.37766996026039124
+Epoch 60, SGD | Loss TANH: 0.3783160448074341
+Epoch 70, SGD | Loss RELU: 0.3724023997783661
+Epoch 70, SGD | Loss TANH: 0.3751338720321655
+Epoch 80, SGD | Loss RELU: 0.3876665234565735
+Epoch 80, SGD | Loss TANH: 0.38270702958106995
+Epoch 90, SGD | Loss RELU: 0.37578684091567993
+Epoch 90, SGD | Loss TANH: 0.3695245683193207
+Epoch 100, SGD | Loss RELU: 0.3731934726238251
+Epoch 100, SGD | Loss TANH: 0.3674921691417694
+took 225023.95ms
+
+
 """
