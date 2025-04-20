@@ -68,8 +68,8 @@ class M_relu(Model):
 
 RELU = M_relu()
 
-lr = 0.01 #validate
-optim_sgd = nn.optim.SGD(nn.state.get_parameters(RELU), lr)
+lr_sgd = 0.01 #validate
+optim_sgd = nn.optim.SGD(nn.state.get_parameters(RELU), lr_sgd)
 """Optimizer"""
 
 num_epochs = 101
@@ -106,7 +106,9 @@ for epoch in range(num_epochs):
     # update
     optim_sgd.step()
 
-  if epoch % 10 == 0 : print(f"Epoch {epoch}, Loss: {loss_relu.numpy()}")
+  if epoch % 10 == 0 : 
+      loss_relu = RELU(X).cross_entropy(Y)
+      print(f"Epoch {epoch}, Loss RELU: {loss_relu.numpy()}")
 
 e = time.time()
 print(f"took {(e-s)*1000:.2f}ms")
