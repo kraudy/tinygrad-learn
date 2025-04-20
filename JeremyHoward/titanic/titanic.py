@@ -66,10 +66,20 @@ class M_relu(Model):
     # return logits
     return X.matmul(self.W1).add(self.b1).relu().matmul(self.W2).add(self.b2)
 
-RELU = M_relu()
+class M_tanh(Model):
+  def __init__(self):
+      super().__init__()
+  
+  def __call__(self, X: Tensor) ->Tensor:
+    # return logits
+    return X.matmul(self.W1).add(self.b1).tanh().matmul(self.W2).add(self.b2)
 
-lr_sgd = 0.01 #validate
+RELU = M_relu()
+TANH = M_tanh()
+
+lr_sgd = 0.1 #validate
 optim_sgd = nn.optim.SGD(nn.state.get_parameters(RELU), lr_sgd)
+
 """Optimizer"""
 
 num_epochs = 101
@@ -121,18 +131,18 @@ print(f"took {(e-s)*1000:.2f}ms")
 
 """
 Relu
-Epoch 0, Loss: 0.6348017454147339
-Epoch 10, Loss: 0.6610940098762512
-Epoch 20, Loss: 0.7582830786705017
-Epoch 30, Loss: 0.3846035301685333
-Epoch 40, Loss: 0.40201857686042786
-Epoch 50, Loss: 0.5522032380104065
-Epoch 60, Loss: 0.37767961621284485
-Epoch 70, Loss: 0.3409600853919983
-Epoch 80, Loss: 0.4008735120296478
-Epoch 90, Loss: 0.38173627853393555
-Epoch 100, Loss: 0.40271297097206116
-took 156111.51ms
+Epoch 0, Loss RELU: 0.44249653816223145
+Epoch 10, Loss RELU: 0.4010377526283264
+Epoch 20, Loss RELU: 0.3978310823440552
+Epoch 30, Loss RELU: 0.3859252333641052
+Epoch 40, Loss RELU: 0.38797450065612793
+Epoch 50, Loss RELU: 0.3843986690044403
+Epoch 60, Loss RELU: 0.41583114862442017
+Epoch 70, Loss RELU: 0.38714471459388733
+Epoch 80, Loss RELU: 0.4209233224391937
+Epoch 90, Loss RELU: 0.3701449930667877
+Epoch 100, Loss RELU: 0.3612000644207001
+took 119178.16ms
 
 Tanh
 Loss: 1.1645634174346924
