@@ -68,19 +68,8 @@ class M_relu(Model):
 
 RELU = M_relu()
 
-L1_neurons = 50 #make it 100
-W1 = Tensor.randn(x_cols, L1_neurons)
-b1 = Tensor.randn(L1_neurons)
-
-L2_neurons = 2
-W2 = Tensor.randn(L1_neurons, L2_neurons)
-b2 = Tensor.randn(L2_neurons)
-"""Defined network"""
-
-#params = [W1, b1, W2, b2]
 lr = 0.01 #validate
-#optim = nn.optim.SGD(params, lr)
-optim = nn.optim.SGD(nn.state.get_parameters(RELU), lr)
+optim_sgd = nn.optim.SGD(nn.state.get_parameters(RELU), lr)
 """Optimizer"""
 
 num_epochs = 101
@@ -106,25 +95,25 @@ for epoch in range(num_epochs):
 
     #logits = X_batch.matmul(W1).add(b1).relu().matmul(W2).add(b2)
     #loss = logits.cross_entropy(Y_batch)
-    loss = RELU(X_batch).cross_entropy(Y_batch)
+    loss_relu = RELU(X_batch).cross_entropy(Y_batch)
 
     #zero grads
-    optim.zero_grad()
+    optim_sgd.zero_grad()
 
     #backward
-    loss.backward()
+    loss_relu.backward()
 
     # update
-    optim.step()
+    optim_sgd.step()
 
-  if epoch % 10 == 0 : print(f"Epoch {epoch}, Loss: {loss.numpy()}")
+  if epoch % 10 == 0 : print(f"Epoch {epoch}, Loss: {loss_relu.numpy()}")
 
 e = time.time()
 print(f"took {(e-s)*1000:.2f}ms")
 
-@TinyJit
-def forward(X: Tensor) -> Tensor:
-  return X.matmul(W1).add(b1).relu().matmul(W2).add(b2)
+#@TinyJit
+#def forward(X: Tensor) -> Tensor:
+#  return X.matmul(W1).add(b1).relu().matmul(W2).add(b2)
  
 # Do inference
 
