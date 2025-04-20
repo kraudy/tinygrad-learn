@@ -77,8 +77,11 @@ class M_tanh(Model):
 RELU = M_relu()
 TANH = M_tanh()
 
-lr_sgd = 0.1 #validate
-optim_sgd = nn.optim.SGD(nn.state.get_parameters(RELU), lr_sgd)
+lr_sgd_relu = 0.1 #validate
+optim_sgd_relu = nn.optim.SGD(nn.state.get_parameters(RELU), lr_sgd_relu)
+
+lr_sgd_tanh = 0.1 #validate
+optim_sgd_tanh = nn.optim.SGD(nn.state.get_parameters(TANH), lr_sgd_tanh)
 
 """Optimizer"""
 
@@ -101,24 +104,22 @@ for epoch in range(num_epochs):
     Y_batch = Y[batch_idx]
 
     #logits = X_batch.matmul(W1).add(b1).tanh() # check relu, sigmoid, etc
-    #logits = X_batch.matmul(W1).add(b1).relu()
-
-    #logits = X_batch.matmul(W1).add(b1).relu().matmul(W2).add(b2)
-    #loss = logits.cross_entropy(Y_batch)
     loss_relu = RELU(X_batch).cross_entropy(Y_batch)
-
-    #zero grads
-    optim_sgd.zero_grad()
-
-    #backward
+    optim_sgd_relu.zero_grad()
     loss_relu.backward()
+    optim_sgd_relu.step()
 
-    # update
-    optim_sgd.step()
+    loss_tanh = TANH(X_batch).cross_entropy(Y_batch)
+    optim_sgd_tanh.zero_grad()
+    loss_tanh.backward()
+    optim_sgd_tanh.step()
 
   if epoch % 10 == 0 : 
       loss_relu = RELU(X).cross_entropy(Y)
-      print(f"Epoch {epoch}, Loss RELU: {loss_relu.numpy()}")
+      print(f"Epoch {epoch}, SGD | Loss RELU: {loss_relu.numpy()}")
+
+      loss_tanh = TANH(X).cross_entropy(Y)
+      print(f"Epoch {epoch}, SGD | Loss TANH: {loss_tanh.numpy()}")
 
 e = time.time()
 print(f"took {(e-s)*1000:.2f}ms")
@@ -130,30 +131,27 @@ print(f"took {(e-s)*1000:.2f}ms")
 # Do inference
 
 """
-Relu
-Epoch 0, Loss RELU: 0.44249653816223145
-Epoch 10, Loss RELU: 0.4010377526283264
-Epoch 20, Loss RELU: 0.3978310823440552
-Epoch 30, Loss RELU: 0.3859252333641052
-Epoch 40, Loss RELU: 0.38797450065612793
-Epoch 50, Loss RELU: 0.3843986690044403
-Epoch 60, Loss RELU: 0.41583114862442017
-Epoch 70, Loss RELU: 0.38714471459388733
-Epoch 80, Loss RELU: 0.4209233224391937
-Epoch 90, Loss RELU: 0.3701449930667877
-Epoch 100, Loss RELU: 0.3612000644207001
-took 119178.16ms
-
-Tanh
-Loss: 1.1645634174346924
-Loss: 0.3553141951560974
-Loss: 0.29564711451530457
-Loss: 0.4266332685947418
-Loss: 0.5494696497917175
-Loss: 0.2601075768470764
-Loss: 0.4603317379951477
-Loss: 0.22537310421466827
-Loss: 0.6060318946838379
-Loss: 0.25036874413490295
-Loss: 0.39255309104919434
+Epoch 0, SGD | Loss RELU: 0.4353294372558594
+Epoch 0, SGD | Loss TANH: 0.9595557451248169
+Epoch 10, SGD | Loss RELU: 0.42728522419929504
+Epoch 10, SGD | Loss TANH: 0.4000791609287262
+Epoch 20, SGD | Loss RELU: 0.4008325934410095
+Epoch 20, SGD | Loss TANH: 0.36548030376434326
+Epoch 30, SGD | Loss RELU: 0.4011451303958893
+Epoch 30, SGD | Loss TANH: 0.3567061126232147
+Epoch 40, SGD | Loss RELU: 0.4163704216480255
+Epoch 40, SGD | Loss TANH: 0.35577359795570374
+Epoch 50, SGD | Loss RELU: 0.418885201215744
+Epoch 50, SGD | Loss TANH: 0.35098880529403687
+Epoch 60, SGD | Loss RELU: 0.4408760368824005
+Epoch 60, SGD | Loss TANH: 0.4212713837623596
+Epoch 70, SGD | Loss RELU: 0.39157143235206604
+Epoch 70, SGD | Loss TANH: 0.3345852494239807
+Epoch 80, SGD | Loss RELU: 0.38610124588012695
+Epoch 80, SGD | Loss TANH: 0.33571767807006836
+Epoch 90, SGD | Loss RELU: 0.40522268414497375
+Epoch 90, SGD | Loss TANH: 0.3348316252231598
+Epoch 100, SGD | Loss RELU: 0.3779715895652771
+Epoch 100, SGD | Loss TANH: 0.34364986419677734
+took 222516.03ms
 """
