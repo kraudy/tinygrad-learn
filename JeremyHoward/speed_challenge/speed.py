@@ -59,15 +59,43 @@ array([[1, 1, 1, ..., 0, 0, 0],
 flow_images = []
 
 
-#pdb.set_trace()
 
 while capture.isOpened():
   ret, frame = capture.read()
+  """
+  (Pdb) type(frame)
+  <class 'numpy.ndarray'>
+  (Pdb) frame
+  array([[[4, 1, 2],
+          [4, 1, 2],
+          [4, 1, 2],
+          ...,
+          [0, 0, 0],
+          [0, 0, 0],
+          [0, 0, 0]],
+        ...,
+          , shape=(480, 640, 3), dtype=uint8)
+  A color frame is just a 3d tensor
+  """
   if not ret: break
 
   gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+  """
+  (Pdb) type(gray)
+  <class 'numpy.ndarray'>
+  (Pdb) gray
+  array([[2, 2, 2, ..., 0, 0, 0],
+        [3, 3, 3, ..., 0, 0, 0],
+        [5, 5, 5, ..., 0, 0, 0],
+        ...,
+        [2, 2, 2, ..., 2, 2, 2],
+        [2, 2, 2, ..., 2, 2, 2],
+        [2, 2, 2, ..., 2, 2, 2]], shape=(480, 640), dtype=uint8)
+  Making the frame gray leave us a 2d tensor.
+  """
   flow = cv2.calcOpticalFlowFarneback(prev_gray, gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
 
+  pdb.set_trace()
   # Convert to HSV for training
   mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
   hsv = np.zeros_like(prev)
