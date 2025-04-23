@@ -80,11 +80,19 @@ class M_tanh(Model):
 RELU = M_relu()
 TANH = M_tanh()
 
-lr_sgd_relu = 0.1 #validate
+# SGD optimizer
+lr_sgd_relu = 0.1
 optim_sgd_relu = nn.optim.SGD(nn.state.get_parameters(RELU), lr_sgd_relu)
 
-lr_sgd_tanh = 0.1 #validate
+lr_sgd_tanh = 0.1
 optim_sgd_tanh = nn.optim.SGD(nn.state.get_parameters(TANH), lr_sgd_tanh)
+
+# Adam optimizers
+lr_adam_relu = 0.001  # Smaller lr for Adam
+optim_adam_relu = nn.optim.Adam(nn.state.get_parameters(RELU), lr_adam_relu)
+
+lr_adam_tanh = 0.001  # Smaller lr for Adam
+optim_adam_tanh = nn.optim.Adam(nn.state.get_parameters(TANH), lr_adam_tanh)
 
 """Optimizer"""
 
