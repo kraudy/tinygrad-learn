@@ -77,22 +77,27 @@ class M_tanh(Model):
     # return logits
     return X.matmul(self.W1).add(self.b1).tanh().matmul(self.W2).add(self.b2)
 
-RELU = M_relu()
-TANH = M_tanh()
+
 
 # SGD optimizer
+RELU_SGD = M_relu()
+TANH_SGD = M_tanh()
+
 lr_sgd_relu = 0.1
-optim_sgd_relu = nn.optim.SGD(nn.state.get_parameters(RELU), lr_sgd_relu)
+optim_sgd_relu = nn.optim.SGD(nn.state.get_parameters(RELU_SGD), lr_sgd_relu)
 
 lr_sgd_tanh = 0.1
-optim_sgd_tanh = nn.optim.SGD(nn.state.get_parameters(TANH), lr_sgd_tanh)
+optim_sgd_tanh = nn.optim.SGD(nn.state.get_parameters(TANH_SGD), lr_sgd_tanh)
 
 # Adam optimizers
+RELU_ADAM = M_relu()
+TANH_ADAM = M_tanh()
+
 lr_adam_relu = 0.001  # Smaller lr for Adam
-optim_adam_relu = nn.optim.Adam(nn.state.get_parameters(RELU), lr_adam_relu)
+optim_adam_relu = nn.optim.Adam(nn.state.get_parameters(RELU_ADAM), lr_adam_relu)
 
 lr_adam_tanh = 0.001  # Smaller lr for Adam
-optim_adam_tanh = nn.optim.Adam(nn.state.get_parameters(TANH), lr_adam_tanh)
+optim_adam_tanh = nn.optim.Adam(nn.state.get_parameters(TANH_ADAM), lr_adam_tanh)
 
 """Optimizer"""
 
@@ -114,22 +119,24 @@ for epoch in range(num_epochs):
     X_batch = X[batch_idx]
     Y_batch = Y[batch_idx]
 
-    #logits = X_batch.matmul(W1).add(b1).tanh() # check relu, sigmoid, etc
-    loss_relu = RELU(X_batch).cross_entropy(Y_batch)
+    # SGD
+    loss_relu = RELU_SGD(X_batch).cross_entropy(Y_batch)
     optim_sgd_relu.zero_grad()
     loss_relu.backward()
     optim_sgd_relu.step()
 
-    loss_tanh = TANH(X_batch).cross_entropy(Y_batch)
+    loss_tanh = TANH_SGD(X_batch).cross_entropy(Y_batch)
     optim_sgd_tanh.zero_grad()
     loss_tanh.backward()
     optim_sgd_tanh.step()
+    # ADAM
+    
 
   if epoch % 10 == 0 : 
-      loss_relu = RELU(X).cross_entropy(Y)
+      loss_relu = RELU_SGD(X).cross_entropy(Y)
       print(f"Epoch {epoch}, SGD | Loss RELU: {loss_relu.numpy()}")
 
-      loss_tanh = TANH(X).cross_entropy(Y)
+      loss_tanh = TANH_SGD(X).cross_entropy(Y)
       print(f"Epoch {epoch}, SGD | Loss TANH: {loss_tanh.numpy()}")
 
 e = time.time()
