@@ -38,11 +38,14 @@ array([[1, 1, 1, ..., 0, 0, 0],
        [2, 2, 2, ..., 3, 3, 3],
        [2, 2, 2, ..., 3, 3, 3]], shape=(480, 640), dtype=uint8)
 """
-flow_images = []
 
+crop_h=480
+crop_w=640
 
+frame_count = int(capture.get(cv2.CAP_PROP_FRAME_COUNT)) - 1  # 20399 flow images
+flow_images = np.zeros((frame_count, crop_h, crop_w, 3), dtype=np.uint8)
 
-while capture.isOpened():
+for i in range(frame_count):
   ret, frame = capture.read()
   """
   (Pdb) type(frame)
@@ -141,13 +144,15 @@ while capture.isOpened():
   """
   hsv[..., 2] = cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)
 
-  flow_images.append(hsv)
-  if len(flow_images) % 100 == 0: print(f"Len flow_images {len(flow_images)}")
+  hsv = hsv[:crop_h, :crop_w]
+  flow_images[i] = hsv
+
+  if (i + 1) % 100 == 0: print(f"Step {i}")
   """Len flow_images 20300"""
   prev_gray = gray
 
+#pdb.set_trace()
 cache_path="./data/flow_images.npy"
-flow_images = np.array(flow_images)
 print(f"Saving flow images to {cache_path}")
 np.save(cache_path, flow_images)
 

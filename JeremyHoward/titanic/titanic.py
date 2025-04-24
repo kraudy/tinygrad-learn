@@ -120,24 +120,24 @@ for epoch in range(num_epochs):
     Y_batch = Y[batch_idx]
 
     # SGD
-    loss_relu = RELU_SGD(X_batch).cross_entropy(Y_batch)
+    loss_relu_sgd = RELU_SGD(X_batch).cross_entropy(Y_batch)
     optim_sgd_relu.zero_grad()
-    loss_relu.backward()
+    loss_relu_sgd.backward()
     optim_sgd_relu.step()
 
-    loss_tanh = TANH_SGD(X_batch).cross_entropy(Y_batch)
+    loss_tanh_sgd = TANH_SGD(X_batch).cross_entropy(Y_batch)
     optim_sgd_tanh.zero_grad()
-    loss_tanh.backward()
+    loss_tanh_sgd.backward()
     optim_sgd_tanh.step()
     # ADAM
     
 
   if epoch % 10 == 0 : 
-      loss_relu = RELU_SGD(X).cross_entropy(Y)
-      print(f"Epoch {epoch}, SGD | Loss RELU: {loss_relu.numpy()}")
+      loss_relu_sgd = RELU_SGD(X).cross_entropy(Y)
+      print(f"Epoch {epoch}, SGD | Loss RELU: {loss_relu_sgd.numpy()}")
 
-      loss_tanh = TANH_SGD(X).cross_entropy(Y)
-      print(f"Epoch {epoch}, SGD | Loss TANH: {loss_tanh.numpy()}")
+      loss_tanh_sgd = TANH_SGD(X).cross_entropy(Y)
+      print(f"Epoch {epoch}, SGD | Loss TANH: {loss_tanh_sgd.numpy()}")
 
 e = time.time()
 print(f"took {(e-s)*1000:.2f}ms")
