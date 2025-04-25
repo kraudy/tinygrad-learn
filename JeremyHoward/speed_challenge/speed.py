@@ -21,11 +21,14 @@ array([28.105569, 28.105569, 28.106527, ...,  2.289795,  2.292917,
 """
 
 print(f"Defining network")
-W1 = Tensor.randn(480*640*3, 100) * (1 / 480*640*3) ** 0.5
-b1 = Tensor.zeros(100)
+W1 = Tensor.randn(480*640*3, 300) * (1 / 480*640*3) ** 0.5
+b1 = Tensor.zeros(300)
 
-W2 = Tensor.randn(100, 1) * (1 / 100) ** 0.5
-b2 = Tensor.zeros(1)
+W2 = Tensor.randn(300, 100) * (1 / 300) ** 0.5
+b2 = Tensor.zeros(100)
+
+W3 = Tensor.randn(100, 1) * (1 / 100) ** 0.5
+b3 = Tensor.zeros(1)
 
 print(f"Declaring optimizer")
 params = [W1, b1, W2, b2]
@@ -63,7 +66,7 @@ for chunk_X, chunk_Y in load_data_in_chunks():
     Y_batch = chunk_Y[batch_idx]
 
     print("Doing forward")
-    pred = X_batch.flatten(1).matmul(W1).add(b1).tanh().matmul(W2).add(b2)
+    pred = X_batch.flatten(1).matmul(W1).add(b1).tanh().matmul(W2).add(b2).tanh().matmul(W3).add(b3)
     loss = pred.sub(Y_batch).square().mean() # MSE Loss
     #loss = loss_fn(pred, Y_batch)
     optim.zero_grad()
@@ -117,5 +120,66 @@ Doing forward
 Loss: 18867530.0
 Doing forward
 Loss: 5181755904.0
+
+==============
+Changed neurons to 200
+
+Doing forward
+Loss: 450.91021728515625
+Doing forward
+Loss: 449739.84375
+Doing forward
+Loss: 418335872.0
+Doing forward
+Loss: 429689733120.0
+Doing forward
+
+================
+Changed neurons to 300
+
+Doing forward
+Loss: 363.5306091308594
+Doing forward
+Loss: 763290.5
+Doing forward
+Loss: 1609939200.0
+Doing forward
+Loss: 3368920023040.0
+Doing forward
+Loss: 8773269029126144.0
+Doing forward
+Loss: 2.481696040229955e+19
+
+Just incrementing the neurons does not seems to help learning
+
+==================
+With three layers deep, the learning improves but it stagnates at a local maximum
+
+Loss: 432.3953857421875
+Doing forward
+Loss: 147.9228057861328
+Doing forward
+Loss: 191.9700927734375
+Doing forward
+Loss: 160.77333068847656
+Doing forward
+Loss: 169.14134216308594
+Doing forward
+Loss: 173.40576171875
+Doing forward
+Loss: 144.19711303710938
+Doing forward
+Loss: 168.5128631591797
+Doing forward
+Loss: 162.5296630859375
+Doing forward
+Loss: 162.90748596191406
+Doing forward
+Loss: 178.20960998535156
+Doing forward
+Loss: 153.54296875
+Doing forward
+Loss: 149.7224884033203
+
 
 """
