@@ -130,6 +130,17 @@ for epoch in range(num_epochs):
     loss_tanh_sgd.backward()
     optim_sgd_tanh.step()
     # ADAM
+    loss_relu_adam = RELU_ADAM(X_batch).cross_entropy(Y_batch)
+    optim_adam_relu.zero_grad()
+    loss_relu_adam.backward()
+    optim_adam_relu.step()
+
+    # This gives out of index Error.
+
+    #loss_tanh_adam = TANH_ADAM(X_batch).cross_entropy(Y_batch)
+    #optim_adam_tanh.zero_grad()
+    #loss_tanh_adam.backward()
+    #optim_adam_tanh.step()
     
 
   if epoch % 10 == 0 : 
@@ -138,6 +149,12 @@ for epoch in range(num_epochs):
 
       loss_tanh_sgd = TANH_SGD(X).cross_entropy(Y)
       print(f"Epoch {epoch}, SGD | Loss TANH: {loss_tanh_sgd.numpy()}")
+
+      loss_relu_adam = RELU_ADAM(X).cross_entropy(Y)
+      print(f"Epoch {epoch}, ADAM | Loss RELU: {loss_relu_adam.numpy()}")
+
+      #loss_tanh_adam = TANH_ADAM(X).cross_entropy(Y)
+      #print(f"Epoch {epoch}, ADAM | Loss TANH: {loss_tanh_adam.numpy()}")
 
 e = time.time()
 print(f"took {(e-s)*1000:.2f}ms")
@@ -223,5 +240,39 @@ Epoch 100, SGD | Loss RELU: 0.3731934726238251
 Epoch 100, SGD | Loss TANH: 0.3674921691417694
 took 225023.95ms
 
+Epoch 0, SGD | Loss RELU: 0.4518755376338959
+Epoch 0, SGD | Loss TANH: 0.45538046956062317
+Epoch 0, ADAM | Loss RELU: 0.7150053977966309
+Epoch 10, SGD | Loss RELU: 0.41894063353538513
+Epoch 10, SGD | Loss TANH: 0.4237109422683716
+Epoch 10, ADAM | Loss RELU: 0.42109259963035583
+Epoch 20, SGD | Loss RELU: 0.39343640208244324
+Epoch 20, SGD | Loss TANH: 0.4063810408115387
+Epoch 20, ADAM | Loss RELU: 0.4060221016407013
+Epoch 30, SGD | Loss RELU: 0.39335691928863525
+Epoch 30, SGD | Loss TANH: 0.39661625027656555
+Epoch 30, ADAM | Loss RELU: 0.3988180458545685
+Epoch 40, SGD | Loss RELU: 0.41304880380630493
+Epoch 40, SGD | Loss TANH: 0.3885083794593811
+Epoch 40, ADAM | Loss RELU: 0.3943473994731903
+Epoch 50, SGD | Loss RELU: 0.3793923258781433
+Epoch 50, SGD | Loss TANH: 0.38692599534988403
+Epoch 50, ADAM | Loss RELU: 0.39049461483955383
+Epoch 60, SGD | Loss RELU: 0.3831462264060974
+Epoch 60, SGD | Loss TANH: 0.3835182189941406
+Epoch 60, ADAM | Loss RELU: 0.38751882314682007
+Epoch 70, SGD | Loss RELU: 0.3916744887828827
+Epoch 70, SGD | Loss TANH: 0.38671228289604187
+Epoch 70, ADAM | Loss RELU: 0.3845788240432739
+Epoch 80, SGD | Loss RELU: 0.3771703243255615
+Epoch 80, SGD | Loss TANH: 0.37663590908050537
+Epoch 80, ADAM | Loss RELU: 0.3824060559272766
+Epoch 90, SGD | Loss RELU: 0.3811914324760437
+Epoch 90, SGD | Loss TANH: 0.379207044839859
+Epoch 90, ADAM | Loss RELU: 0.3799915015697479
+Epoch 100, SGD | Loss RELU: 0.37167781591415405
+Epoch 100, SGD | Loss TANH: 0.37603652477264404
+Epoch 100, ADAM | Loss RELU: 0.37814807891845703
+took 360912.38ms
 
 """
