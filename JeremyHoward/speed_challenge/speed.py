@@ -22,10 +22,10 @@ array([28.105569, 28.105569, 28.106527, ...,  2.289795,  2.292917,
 """
 
 print(f"Defining network")
-W1 = Tensor.randn(480*640*3, 800) * (1 / 480*640*3) ** 0.5
-b1 = Tensor.zeros(800)
+W1 = Tensor.randn(480*640*3, 600) * (1 / 480*640*3) ** 0.5
+b1 = Tensor.zeros(600)
 
-W2 = Tensor.randn(800, 400) * (1 / 800) ** 0.5
+W2 = Tensor.randn(600, 400) * (1 / 600) ** 0.5
 b2 = Tensor.zeros(400)
 
 W3 = Tensor.randn(400, 200) * (1 / 400) ** 0.5
@@ -48,7 +48,11 @@ optim = nn.optim.SGD(params, lr)
 #chunk = 1000
 #batch = 32
 chunk = 500
-batch = 16
+#batch = 16
+batch = 32
+
+n_chunk = 0
+total_chunk = 20399 // chunk
 
 # Load data in chunks
 def load_data_in_chunks():
@@ -66,14 +70,14 @@ def load_data_in_chunks():
 
 print(f"Training")
 
-chunk_loss = 0
-data_proccessed = 0
+total_loss = 0
+
 for chunk_X, chunk_Y in load_data_in_chunks():
   print(f"Memory usage outer loop: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
   Tensor.training=True
   
   # Mini-batch training within chunk
-  minibatch_loss = 0
+  chunk_loss = 0
   indices = np.random.permutation(chunk_X.shape[0])
   for i in range(0, chunk_X.shape[0], batch):
     print(f"Memory usage inner loop: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
@@ -88,21 +92,21 @@ for chunk_X, chunk_Y in load_data_in_chunks():
     loss.backward()
     optim.step()
 
-    minibatch_loss += loss.numpy()
-    print(f"%: {((i / chunk_X.shape[0]) * 100):.4f} | Loss: {loss.numpy():.4f}")
+    chunk_loss += loss.numpy()
+    print(f"Chunk {n_chunk + 1} %: {((i / chunk_X.shape[0]) * 100):.4f} | Loss: {loss.numpy():.4f}")
 
-  minibatch_loss /= chunk_X.shape[0]
-  print("="*20)
-  print(f"Mean minibatch loss {minibatch_loss}")
-  data_proccessed += chunk_X.shape[0]
-  print(f"data proccessed %: {(data_proccessed / 20399):.4f}")
-  print("="*20)
+  chunk_loss /= (chunk // batch)
+  print("="*40)
+  print(f"Mean Chunk loss {chunk_loss:.4f}")
+  n_chunk += 1
+  print(f"Total data proccessed %: {(n_chunk / total_chunk):.4f}")
+  print("="*40)
 
-  chunk_loss += minibatch_loss
+  total_loss += chunk_loss
   #gc.collect() # Check for garbaje collection
 
-chunk_loss /= (20399 // chunk)
-print(f"Mean total loss {chunk_loss}")
+total_loss /= total_chunk
+print(f"Mean total loss {total_loss}")
 
 """
 With RELU
@@ -380,5 +384,8 @@ Doing forward
 Memory usage inner loop: 13601.18 MB
 
 =========================
+Now we need to make it stop overfitting
+
+
 
 """
