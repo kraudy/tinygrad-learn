@@ -21,25 +21,29 @@ array([28.105569, 28.105569, 28.106527, ...,  2.289795,  2.292917,
 """
 
 print(f"Defining network")
-W1 = Tensor.randn(480*640*3, 400) * (1 / 480*640*3) ** 0.5
-b1 = Tensor.zeros(400)
+W1 = Tensor.randn(480*640*3, 600) * (1 / 480*640*3) ** 0.5
+b1 = Tensor.zeros(600)
 
-W2 = Tensor.randn(400, 200) * (1 / 400) ** 0.5
-b2 = Tensor.zeros(200)
+W2 = Tensor.randn(600, 400) * (1 / 600) ** 0.5
+b2 = Tensor.zeros(400)
 
-W3 = Tensor.randn(200, 100) * (1 / 200) ** 0.5
-b3 = Tensor.zeros(100)
+W3 = Tensor.randn(400, 200) * (1 / 400) ** 0.5
+b3 = Tensor.zeros(200)
 
-W4 = Tensor.randn(100, 1) * (1 / 100) ** 0.5
-b4 = Tensor.zeros(1)
+W4 = Tensor.randn(200, 100) * (1 / 200) ** 0.5
+b4 = Tensor.zeros(100)
+
+W5 = Tensor.randn(100, 1) * (1 / 100) ** 0.5
+b5 = Tensor.zeros(1)
 
 print(f"Declaring optimizer")
-params = [W1, b1, W2, b2, W3, b3, W4, b4]
+params = [W1, b1, W2, b2, W3, b3, W4, b4, W5, b5]
 
 lr = 0.01
 optim = nn.optim.SGD(params, lr)
 
 # Load size
+# Consider reducing to 500 and 16
 chunk = 1000
 batch = 32
 
@@ -69,14 +73,14 @@ for chunk_X, chunk_Y in load_data_in_chunks():
     Y_batch = chunk_Y[batch_idx]
 
     print("Doing forward")
-    pred = X_batch.flatten(1).matmul(W1).add(b1).tanh().matmul(W2).add(b2).tanh().matmul(W3).add(b3).tanh().matmul(W4).add(b4)
+    pred = X_batch.flatten(1).matmul(W1).add(b1).tanh().matmul(W2).add(b2).tanh().matmul(W3).add(b3).tanh().matmul(W4).add(b4).tanh().matmul(W5).add(b5)
     loss = pred.sub(Y_batch).square().mean() # MSE Loss
     #loss = loss_fn(pred, Y_batch)
     optim.zero_grad()
     loss.backward()
     optim.step()
 
-    print(f"Loss: {loss.numpy()}")
+    print(f"%: {((i / chunk_X.shape[0]) * 100):.4f} | Loss: {loss.numpy():.4f}")
 
   break
 
@@ -263,6 +267,75 @@ Doing forward
 Loss: 30.62093734741211
 Doing forward
 
-Now the Goal is to get the loss <= 10 using only a linear network
+Now the Goal is to see how low the loss can get using only a linear network
+loss <= 10 would be nice but don't know if it is possible
+
+=========================
+With another layer
+
+Doing forward
+I: 0 of 1000 | Loss: 436.9182434082031
+Doing forward
+I: 32 of 1000 | Loss: 195.4608917236328
+Doing forward
+I: 64 of 1000 | Loss: 62.779335021972656
+Doing forward
+I: 96 of 1000 | Loss: 77.89615631103516
+Doing forward
+I: 128 of 1000 | Loss: 75.02098846435547
+Doing forward
+I: 160 of 1000 | Loss: 70.41670989990234
+Doing forward
+I: 192 of 1000 | Loss: 63.474754333496094
+Doing forward
+I: 224 of 1000 | Loss: 33.384090423583984
+Doing forward
+I: 256 of 1000 | Loss: 27.371028900146484
+Doing forward
+I: 288 of 1000 | Loss: 45.24267578125
+Doing forward
+I: 320 of 1000 | Loss: 55.57011795043945
+Doing forward
+I: 352 of 1000 | Loss: 60.7623291015625
+Doing forward
+I: 384 of 1000 | Loss: 55.89450454711914
+Doing forward
+I: 416 of 1000 | Loss: 58.7736930847168
+Doing forward
+I: 448 of 1000 | Loss: 36.36652755737305
+Doing forward
+I: 480 of 1000 | Loss: 18.890789031982422
+Doing forward
+I: 512 of 1000 | Loss: 16.9257869720459
+Doing forward
+I: 544 of 1000 | Loss: 11.89849853515625
+Doing forward
+I: 576 of 1000 | Loss: 6.863011360168457
+Doing forward
+I: 608 of 1000 | Loss: 10.803991317749023
+Doing forward
+I: 640 of 1000 | Loss: 14.29101276397705
+Doing forward
+I: 672 of 1000 | Loss: 35.66658401489258
+Doing forward
+I: 704 of 1000 | Loss: 28.417312622070312
+Doing forward
+I: 736 of 1000 | Loss: 20.645124435424805
+Doing forward
+I: 768 of 1000 | Loss: 15.336779594421387
+Doing forward
+I: 800 of 1000 | Loss: 14.886085510253906
+Doing forward
+I: 832 of 1000 | Loss: 17.408824920654297
+Doing forward
+I: 864 of 1000 | Loss: 16.256032943725586
+Doing forward
+I: 896 of 1000 | Loss: 13.762035369873047
+Doing forward
+I: 928 of 1000 | Loss: 12.161652565002441
+Doing forward
+I: 960 of 1000 | Loss: 9.883871078491211
+Doing forward
+I: 992 of 1000 | Loss: 15.759051322937012
 
 """
