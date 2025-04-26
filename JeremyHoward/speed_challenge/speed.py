@@ -1,6 +1,7 @@
 from tinygrad import Tensor, nn
 import numpy as np
 import pdb
+import psutil
 
 cache_path="./data/flow_images.npy"
 
@@ -21,10 +22,10 @@ array([28.105569, 28.105569, 28.106527, ...,  2.289795,  2.292917,
 """
 
 print(f"Defining network")
-W1 = Tensor.randn(480*640*3, 600) * (1 / 480*640*3) ** 0.5
-b1 = Tensor.zeros(600)
+W1 = Tensor.randn(480*640*3, 800) * (1 / 480*640*3) ** 0.5
+b1 = Tensor.zeros(800)
 
-W2 = Tensor.randn(600, 400) * (1 / 600) ** 0.5
+W2 = Tensor.randn(800, 400) * (1 / 800) ** 0.5
 b2 = Tensor.zeros(400)
 
 W3 = Tensor.randn(400, 200) * (1 / 400) ** 0.5
@@ -44,8 +45,10 @@ optim = nn.optim.SGD(params, lr)
 
 # Load size
 # Consider reducing to 500 and 16
-chunk = 1000
-batch = 32
+#chunk = 1000
+#batch = 32
+chunk = 500
+batch = 16
 
 # Load data in chunks
 def load_data_in_chunks():
@@ -55,19 +58,25 @@ def load_data_in_chunks():
     num_frames = X_memmap.shape[0]
     
     for i in range(0, num_frames, chunk):
+        print(f"Memory usage before chunk: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
         chunk_X = X_memmap[i:i + chunk].astype(np.float32) / 255.0
         chunk_Y = Y[i:i + chunk]
+        print(f"Memory usage after chunk: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
         yield Tensor(chunk_X, dtype='float32'), Tensor(chunk_Y, dtype='float32')
 
 print(f"Training")
 
-
+chunk_loss = 0
+data_proccessed = 0
 for chunk_X, chunk_Y in load_data_in_chunks():
+  print(f"Memory usage outer loop: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
   Tensor.training=True
   
   # Mini-batch training within chunk
+  minibatch_loss = 0
   indices = np.random.permutation(chunk_X.shape[0])
   for i in range(0, chunk_X.shape[0], batch):
+    print(f"Memory usage inner loop: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
     batch_idx = indices[i:i + batch].tolist()
     X_batch = chunk_X[batch_idx]
     Y_batch = chunk_Y[batch_idx]
@@ -75,15 +84,25 @@ for chunk_X, chunk_Y in load_data_in_chunks():
     print("Doing forward")
     pred = X_batch.flatten(1).matmul(W1).add(b1).tanh().matmul(W2).add(b2).tanh().matmul(W3).add(b3).tanh().matmul(W4).add(b4).tanh().matmul(W5).add(b5)
     loss = pred.sub(Y_batch).square().mean() # MSE Loss
-    #loss = loss_fn(pred, Y_batch)
     optim.zero_grad()
     loss.backward()
     optim.step()
 
+    minibatch_loss += loss.numpy()
     print(f"%: {((i / chunk_X.shape[0]) * 100):.4f} | Loss: {loss.numpy():.4f}")
 
-  break
+  minibatch_loss /= chunk_X.shape[0]
+  print("="*20)
+  print(f"Mean minibatch loss {minibatch_loss}")
+  data_proccessed += chunk_X.shape[0]
+  print(f"data proccessed %: {(data_proccessed / 20399):.4f}")
+  print("="*20)
 
+  chunk_loss += minibatch_loss
+  #gc.collect() # Check for garbaje collection
+
+chunk_loss /= (20399 // chunk)
+print(f"Mean total loss {chunk_loss}")
 
 """
 With RELU
@@ -271,7 +290,7 @@ Now the Goal is to see how low the loss can get using only a linear network
 loss <= 10 would be nice but don't know if it is possible
 
 =========================
-With another layer
+With another layer performance increases but there is still high variability
 
 Doing forward
 I: 0 of 1000 | Loss: 436.9182434082031
@@ -337,5 +356,29 @@ Doing forward
 I: 960 of 1000 | Loss: 9.883871078491211
 Doing forward
 I: 992 of 1000 | Loss: 15.759051322937012
+
+=========================
+Reducing batch and chunk size by half reduced the CPU Ussage but the RAM usage kept the same.
+The only thing is that reducing chunck size could reduce the context neeeded. We'll see.
+
+So, with 2 epochs it is kinda overfitting but afterwars the loss starts going up again
+
+It got to a very low loss
+
+Memory usage inner loop: 13601.18 MB
+Doing forward
+%: 57.6000 | Loss: 0.0502
+Memory usage inner loop: 13601.18 MB
+Doing forward
+%: 60.8000 | Loss: 0.0970
+Memory usage inner loop: 13601.18 MB
+Doing forward
+%: 64.0000 | Loss: 0.0787
+Memory usage inner loop: 13601.18 MB
+Doing forward
+%: 67.2000 | Loss: 0.0758
+Memory usage inner loop: 13601.18 MB
+
+=========================
 
 """
