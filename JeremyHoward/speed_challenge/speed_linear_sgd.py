@@ -22,26 +22,38 @@ array([28.105569, 28.105569, 28.106527, ...,  2.289795,  2.292917,
 """
 
 print(f"Defining network")
-# This first layer is kinda big
-W1 = Tensor.randn(480*640*3, 600) * (1 / 480*640*3) ** 0.5
-b1 = Tensor.zeros(600)
+class Model():
+  def __init__(self):
+    # This first layer is kinda big
+    self.W1 = Tensor.randn(480*640*3, 600) * (1 / 480*640*3) ** 0.5
+    self.b1 = Tensor.zeros(600)
 
-W2 = Tensor.randn(600, 400) * (1 / 600) ** 0.5
-b2 = Tensor.zeros(400)
+    self.W2 = Tensor.randn(600, 400) * (1 / 600) ** 0.5
+    self.b2 = Tensor.zeros(400)
 
-W3 = Tensor.randn(400, 200) * (1 / 400) ** 0.5
-b3 = Tensor.zeros(200)
+    self.W3 = Tensor.randn(400, 200) * (1 / 400) ** 0.5
+    self.b3 = Tensor.zeros(200)
 
-W4 = Tensor.randn(200, 100) * (1 / 200) ** 0.5
-b4 = Tensor.zeros(100)
+    self.W4 = Tensor.randn(200, 100) * (1 / 200) ** 0.5
+    self.b4 = Tensor.zeros(100)
 
-W5 = Tensor.randn(100, 1) * (1 / 100) ** 0.5
-b5 = Tensor.zeros(1)
+    self.W5 = Tensor.randn(100, 1) * (1 / 100) ** 0.5
+    self.b5 = Tensor.zeros(1)
+
+  def __call__(self, X: Tensor) -> Tensor:
+    X = X.flatten(1)
+    X = X.matmul(self.W1).add(self.b1).tanh().dropout()
+    X = X.matmul(self.W2).add(self.b2).tanh().dropout()
+    X = X.matmul(self.W3).add(self.b3).tanh().dropout()
+    X = X.matmul(self.W4).add(self.b4).tanh().dropout()
+    X = X.matmul(self.W5).add(self.b5)
+    return X
+
+
+model = Model()
 
 print(f"Declaring optimizer")
-params = [W1, b1, W2, b2, W3, b3, W4, b4, W5, b5]
-
-optim = nn.optim.SGD(params, lr=0.01)
+optim = nn.optim.SGD(nn.state.get_parameters(model), lr=0.01)
 #optim = nn.optim.Adam(params, lr=0.001)
 """SGD may be leading to overfit"""
 
@@ -88,10 +100,10 @@ for chunk_X, chunk_Y in load_data_in_chunks():
     Y_batch = chunk_Y[batch_idx]
 
     print("Doing forward")
-    pred = X_batch.flatten(1).matmul(W1).add(b1).tanh().dropout().matmul(W2).add(b2).tanh().dropout().matmul(W3).add(b3).tanh().dropout().matmul(W4).add(b4).tanh().dropout().matmul(W5).add(b5)
+    # pred = X_batch.flatten(1).matmul(W1).add(b1).tanh().dropout().matmul(W2).add(b2).tanh().dropout().matmul(W3).add(b3).tanh().dropout().matmul(W4).add(b4).tanh().dropout().matmul(W5).add(b5)
     # Add l2 loss regularization
     # l2_loss = sum(p.square().sum() for p in params) * 0.01
-    loss = pred.sub(Y_batch).square().mean() # + l2_loss # MSE Loss
+    loss = model(X_batch).sub(Y_batch).square().mean() # + l2_loss # MSE Loss
     optim.zero_grad()
     loss.backward()
     optim.step()
