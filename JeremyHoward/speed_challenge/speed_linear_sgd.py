@@ -22,6 +22,7 @@ array([28.105569, 28.105569, 28.106527, ...,  2.289795,  2.292917,
 """
 
 print(f"Defining network")
+# This first layer is kinda big
 W1 = Tensor.randn(480*640*3, 600) * (1 / 480*640*3) ** 0.5
 b1 = Tensor.zeros(600)
 
@@ -40,8 +41,9 @@ b5 = Tensor.zeros(1)
 print(f"Declaring optimizer")
 params = [W1, b1, W2, b2, W3, b3, W4, b4, W5, b5]
 
-lr = 0.01
-optim = nn.optim.SGD(params, lr)
+optim = nn.optim.SGD(params, lr=0.01)
+#optim = nn.optim.Adam(params, lr=0.001)
+"""SGD may be leading to overfit"""
 
 # Load size
 # Consider reducing to 500 and 16
@@ -86,14 +88,16 @@ for chunk_X, chunk_Y in load_data_in_chunks():
     Y_batch = chunk_Y[batch_idx]
 
     print("Doing forward")
-    pred = X_batch.flatten(1).matmul(W1).add(b1).tanh().matmul(W2).add(b2).tanh().matmul(W3).add(b3).tanh().matmul(W4).add(b4).tanh().matmul(W5).add(b5)
-    loss = pred.sub(Y_batch).square().mean() # MSE Loss
+    pred = X_batch.flatten(1).matmul(W1).add(b1).tanh().dropout().matmul(W2).add(b2).tanh().dropout().matmul(W3).add(b3).tanh().dropout().matmul(W4).add(b4).tanh().dropout().matmul(W5).add(b5)
+    # Add l2 loss regularization
+    # l2_loss = sum(p.square().sum() for p in params) * 0.01
+    loss = pred.sub(Y_batch).square().mean() # + l2_loss # MSE Loss
     optim.zero_grad()
     loss.backward()
     optim.step()
 
     chunk_loss += loss.numpy()
-    print(f"Chunk {n_chunk + 1} %: {((i / chunk_X.shape[0]) * 100):.4f} | Loss: {loss.numpy():.4f}")
+    print(f"Chunk {n_chunk + 1}-{total_chunk} % proccessed: {((i / chunk_X.shape[0]) * 100):.4f} | Loss: {loss.numpy():.4f}")
 
   chunk_loss /= (chunk // batch)
   print("="*40)
@@ -386,6 +390,12 @@ Memory usage inner loop: 13601.18 MB
 =========================
 Now we need to make it stop overfitting
 
+Added some .5 drop out rate and maybe change optimizer to ADAM
+and maybe add l2 regularization
 
+if that does not works reduce the first layer params5
+
+Just adding the dropout prevent it from overfitting.
+This could be used to generate a model based only on linear layers
 
 """
