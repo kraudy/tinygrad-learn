@@ -86,7 +86,12 @@ print(f"Training")
 
 total_loss = 0
 
+#Y = np.array([float(line) for line in open("./data/train.txt")])[:-1]  # 20399 labels
 for chunk_X, chunk_Y in load_data_in_chunks():
+  # Try using 
+  # for i in range (0, 20399, chunk)
+  # chunk_X = np.load("./data/flow_images.npy", mmap_mode='r')[i:i+chunk].astype(np.float32) / 255.0
+  # chunk_Y = Y[i:i + chunk]
   print(f"Memory usage outer loop: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
   Tensor.training=True
   
@@ -100,7 +105,6 @@ for chunk_X, chunk_Y in load_data_in_chunks():
     Y_batch = chunk_Y[batch_idx]
 
     print("Doing forward")
-    # pred = X_batch.flatten(1).matmul(W1).add(b1).tanh().dropout().matmul(W2).add(b2).tanh().dropout().matmul(W3).add(b3).tanh().dropout().matmul(W4).add(b4).tanh().dropout().matmul(W5).add(b5)
     # Add l2 loss regularization
     # l2_loss = sum(p.square().sum() for p in params) * 0.01
     loss = model(X_batch).sub(Y_batch).square().mean() # + l2_loss # MSE Loss
@@ -123,6 +127,19 @@ for chunk_X, chunk_Y in load_data_in_chunks():
 
 total_loss /= total_chunk
 print(f"Mean total loss {total_loss}")
+
+# Save model parameters
+model_save_path = "./models/linear_sgd.npz"
+print(f"Saving model to {model_save_path}")
+
+# Get the model's parameters
+param_dict = {}
+for i, param in enumerate(nn.state.get_parameters(model)):
+    param_dict[f'param_{i}'] = param.numpy()
+
+# Save all parameters to a single .npz file
+np.savez(model_save_path, **param_dict)
+print(f"Model saved successfully to {model_save_path}")
 
 """
 With RELU
