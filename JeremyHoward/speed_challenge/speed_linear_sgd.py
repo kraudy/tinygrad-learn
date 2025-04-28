@@ -86,21 +86,24 @@ print(f"Training")
 
 total_loss = 0
 
-#Y = np.array([float(line) for line in open("./data/train.txt")])[:-1]  # 20399 labels
-for chunk_X, chunk_Y in load_data_in_chunks():
+print(f"Memory usage pre training: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
+Y = np.array([float(line) for line in open("./data/train.txt")])[:-1]  # 20399 labels
+#for chunk_X, chunk_Y in load_data_in_chunks():
   # Try using 
-  # for i in range (0, 20399, chunk)
-  # chunk_X = np.load("./data/flow_images.npy", mmap_mode='r')[i:i+chunk].astype(np.float32) / 255.0
-  # chunk_Y = Y[i:i + chunk]
+for i in range (0, 20399, chunk):
+  chunk_X = np.load("./data/flow_images.npy", mmap_mode='r')[i:i+chunk].astype(np.float32) / 255.0
+  chunk_X = Tensor(chunk_X, dtype='float32')
+  chunk_Y = Y[i:i + chunk]
+  chunk_Y = Tensor(chunk_Y, dtype='float32')
   print(f"Memory usage outer loop: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
   Tensor.training=True
   
   # Mini-batch training within chunk
   chunk_loss = 0
   indices = np.random.permutation(chunk_X.shape[0])
-  for i in range(0, chunk_X.shape[0], batch):
+  for j in range(0, chunk_X.shape[0], batch):
     print(f"Memory usage inner loop: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
-    batch_idx = indices[i:i + batch].tolist()
+    batch_idx = indices[j:j + batch].tolist()
     X_batch = chunk_X[batch_idx]
     Y_batch = chunk_Y[batch_idx]
 
@@ -113,7 +116,7 @@ for chunk_X, chunk_Y in load_data_in_chunks():
     optim.step()
 
     chunk_loss += loss.numpy()
-    print(f"Chunk {n_chunk + 1}-{total_chunk} % proccessed: {((i / chunk_X.shape[0]) * 100):.4f} | Loss: {loss.numpy():.4f}")
+    print(f"Chunk {n_chunk + 1}-{total_chunk} % proccessed: {((j / chunk_X.shape[0]) * 100):.4f} | Loss: {loss.numpy():.4f}")
 
   chunk_loss /= (chunk // batch)
   print("="*40)

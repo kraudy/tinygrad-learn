@@ -145,6 +145,7 @@ for i in range(frame_count):
   hsv[..., 2] = cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)
 
   hsv = hsv[:crop_h, :crop_w]
+  # Consider normalizing this thing and set dtype to float32 to reduce processing in training
   flow_images[i] = hsv
 
   if (i + 1) % 100 == 0: print(f"Step {i}")
