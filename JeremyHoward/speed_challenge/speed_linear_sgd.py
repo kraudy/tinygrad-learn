@@ -68,20 +68,6 @@ batch = 32
 n_chunk = 0
 total_chunk = 20399 // chunk
 
-# Load data in chunks
-def load_data_in_chunks():
-    print("Loading data in chunks")
-    Y = np.array([float(line) for line in open("./data/train.txt")])[:-1]  # 20399 labels
-    X_memmap = np.load("./data/flow_images.npy", mmap_mode='r')  # Memory-mapped array
-    num_frames = X_memmap.shape[0]
-    
-    for i in range(0, num_frames, chunk):
-        print(f"Memory usage before chunk: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
-        chunk_X = X_memmap[i:i + chunk].astype(np.float32) / 255.0
-        chunk_Y = Y[i:i + chunk]
-        print(f"Memory usage after chunk: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
-        yield Tensor(chunk_X, dtype='float32'), Tensor(chunk_Y, dtype='float32')
-
 print(f"Training")
 
 total_loss = 0
