@@ -89,7 +89,7 @@ total_loss = 0
 print(f"Memory usage pre training: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
 Y = np.array([float(line) for line in open("./data/train.txt")])[:-1]  # 20399 labels
 #for chunk_X, chunk_Y in load_data_in_chunks():
-  # Try using 
+# Try using 
 for i in range (0, 20399, chunk):
   chunk_X = np.load("./data/flow_images.npy", mmap_mode='r')[i:i+chunk].astype(np.float32) / 255.0
   chunk_X = Tensor(chunk_X, dtype='float32')
@@ -143,6 +143,39 @@ for i, param in enumerate(nn.state.get_parameters(model)):
 # Save all parameters to a single .npz file
 np.savez(model_save_path, **param_dict)
 print(f"Model saved successfully to {model_save_path}")
+
+
+"""
+# Instantiate the model
+model = Model()
+
+# Load the saved model
+model_save_path = "./model_weights.npz"
+print(f"Loading model from {model_save_path}")
+
+# Load the .npz file
+loaded_params = np.load(model_save_path)
+
+# Assign loaded arrays back to the model's parameters
+params = nn.state.get_parameters(model)
+for i, param in enumerate(params):
+    param.assign(Tensor(loaded_params[f'param_{i}']))
+
+print(f"Model loaded successfully from {model_save_path}")
+
+# Now you can use the model for testing
+# Example: Forward pass on test data
+def forward(X):
+    Tensor.training = False  # Disable training mode (e.g., for dropout)
+    return model(X)
+
+# Example: Load test data and run inference
+X_test = np.load("./data/flow_images.npy", mmap_mode='r')[:100].astype(np.float32) / 255.0  # Example: first 100 frames
+X_test_tensor = Tensor(X_test)
+predictions = forward(X_test_tensor).numpy()
+print(f"Predictions shape: {predictions.shape}")
+print(predictions)
+"""
 
 """
 With RELU

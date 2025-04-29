@@ -153,6 +153,11 @@ for i in range(frame_count):
   prev_gray = gray
 
 #pdb.set_trace()
+"""
+We could do the conversion and normalization here
+flow_images = flow_images.astype(np.float32) / 255.0
+but that takes too much RAM for me.
+"""
 cache_path="./data/flow_images.npy"
 print(f"Saving flow images to {cache_path}")
 np.save(cache_path, flow_images)
