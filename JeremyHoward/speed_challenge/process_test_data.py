@@ -1,7 +1,10 @@
 import cv2
 import pdb
+import psutil
 import numpy as np
 """This is intalled with opencv-python"""
+
+print(f"Memory usage starting: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
 
 capture = cv2.VideoCapture('./data/test.mp4')
 """< cv2.VideoCapture 0x7fb6672551b0>"""
@@ -46,7 +49,8 @@ array([[[
          [0, 0, 0]]]], shape=(10797, 480, 640, 3), dtype=uint8)
 """
 
-pdb.set_trace()
+#pdb.set_trace()
+print(f"Memory usage pre cycle: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
 
 for i in range(frame_count):
   ret, frame = capture.read()
@@ -160,12 +164,35 @@ for i in range(frame_count):
 
   test_flow_images[i] = hsv
 
-  if (i + 1) % 100 == 0: print(f"Step {i}")
+  if (i + 1) % 100 == 0: 
+    print(f"Memory usage inside cycle: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
+    print(f"Processed % {(i / 10797):.4f}")
 
   prev_gray = gray
+  """
+  (Pdb) prev_gray
+  array([[1, 1, 1, ..., 0, 0, 0],
+        [2, 2, 2, ..., 0, 0, 0],
+        [2, 2, 2, ..., 0, 0, 0],
+        ...,
+        [1, 1, 1, ..., 1, 1, 1],
+        [1, 1, 1, ..., 1, 1, 1],
+        [1, 1, 1, ..., 1, 1, 1]], shape=(480, 640), dtype=uint8)
+  """
 
 cache_path="./data/test_flow_images.npy"
 print(f"Saving test flow images to {cache_path}")
 np.save(cache_path, test_flow_images)
 
 capture.release()
+
+
+"""
+Memory usage inside cycle: 9.1333 GB
+Processed % 0.9724
+Memory usage inside cycle: 9.2193 GB
+Processed % 0.9817
+Memory usage inside cycle: 9.3058 GB
+Processed % 0.9909
+Saving test flow images to ./data/test_flow_images.npy
+"""
