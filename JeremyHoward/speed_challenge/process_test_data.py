@@ -50,13 +50,46 @@ pdb.set_trace()
 
 for i in range(frame_count):
   ret, frame = capture.read()
+  """
+  (Pdb) ret 
+  True
+  (Pdb) frame
+  array([[[6, 1, 0],
+          [6, 1, 0],
+          [6, 1, 0],
+          ...,
+          [3, 0, 1],
+          [3, 0, 1],
+          [3, 0, 1]]], shape=(480, 640, 3), dtype=uint8)
+  """
 
   if not ret: break
 
   gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+  """
+  (Pdb) gray
+  array([[1, 1, 1, ..., 0, 0, 0],
+        [2, 2, 2, ..., 0, 0, 0],
+        [2, 2, 2, ..., 0, 0, 0],
+        ...,
+        [1, 1, 1, ..., 1, 1, 1],
+        [1, 1, 1, ..., 1, 1, 1],
+        [1, 1, 1, ..., 1, 1, 1]], shape=(480, 640), dtype=uint8)
+  """
 
   flow = cv2.calcOpticalFlowFarneback(prev_gray, gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
-
+  """
+  (Pdb) flow
+  array([
+        [[-4.2749593e-10,  6.7343692e-10],
+          [-1.0103485e-09,  1.2197339e-09],
+          [-3.1918730e-09,  2.0528939e-09],
+          ...,
+          [ 2.6790312e-09,  1.1552592e-10],
+          [ 2.0028936e-09, -6.4602775e-11],
+          [ 1.7798606e-09, -6.8777088e-11]]],
+        shape=(480, 640, 2), dtype=float32)
+  """
   #pdb.set_trace()
   # Convert to HSV for training
   mag, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
@@ -70,7 +103,7 @@ for i in range(frame_count):
   hsv[..., 2] = cv2.normalize(mag, None, 0, 255, cv2.NORM_MINMAX)
 
   hsv = hsv[:crop_h, :crop_w]
-  # Consider normalizing this thing and set dtype to float32 to reduce processing in training
+
   test_flow_images[i] = hsv
 
   if (i + 1) % 100 == 0: print(f"Step {i}")
