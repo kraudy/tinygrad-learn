@@ -58,11 +58,7 @@ optim = nn.optim.SGD(nn.state.get_parameters(model), lr=0.01)
 """SGD may be leading to overfit"""
 
 # Load size
-# Consider reducing to 500 and 16
-#chunk = 1000
-#batch = 32
 chunk = 500
-#batch = 16
 batch = 32
 
 n_chunk = 0
@@ -74,8 +70,7 @@ total_loss = 0
 
 print(f"Memory usage pre training: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
 Y = np.array([float(line) for line in open("./data/train.txt")])[:-1]  # 20399 labels
-#for chunk_X, chunk_Y in load_data_in_chunks():
-# Try using 
+
 for i in range (0, 20399, chunk):
   chunk_X = np.load("./data/flow_images.npy", mmap_mode='r')[i:i+chunk].astype(np.float32) / 255.0
   chunk_X = Tensor(chunk_X, dtype='float32')
@@ -94,6 +89,7 @@ for i in range (0, 20399, chunk):
     Y_batch = chunk_Y[batch_idx]
 
     print("Doing forward")
+    # Not needed for now
     # Add l2 loss regularization
     # l2_loss = sum(p.square().sum() for p in params) * 0.01
     loss = model(X_batch).sub(Y_batch).square().mean() # + l2_loss # MSE Loss
@@ -128,7 +124,7 @@ for i, param in enumerate(nn.state.get_parameters(model)):
 
 # Save all parameters to a single .npz file
 np.savez(model_save_path, **param_dict)
-print(f"Model saved successfully to {model_save_path}")
+print(f"Model linear SGD saved successfully to {model_save_path}")
 
 """
 With RELU
