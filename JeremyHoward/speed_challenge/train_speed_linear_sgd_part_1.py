@@ -53,6 +53,7 @@ class Model():
 model = Model()
 
 print(f"Declaring optimizer")
+#params = nn.state.get_parameters(model)
 optim = nn.optim.SGD(nn.state.get_parameters(model), lr=0.01)
 """SGD may be leading to overfit"""
 
@@ -62,16 +63,17 @@ batch = 32
 
 n_chunk = 0
 # 10200
-total_chunk = 20399 // chunk
+#total_chunk = 20399 // chunk
+total_chunk = 10200 // chunk
 
 print(f"Training")
 
 total_loss = 0
 
 print(f"Memory usage pre training: {psutil.Process().memory_info().rss / 1024**3:.4f} GB")
-Y = np.array([float(line) for line in open("./data/train.txt")])[:-1]  # 20399 labels
+Y = np.array([float(line) for line in open("./data/train.txt")])[:-1]  # 10200 labels
 
-for i in range (0, 20399, chunk):
+for i in range (0, 10200, chunk):
   chunk_X = np.load("./data/flow_images.npy", mmap_mode='r')[i:i+chunk].astype(np.float32) / 255.0
   chunk_X = Tensor(chunk_X, dtype='float32')
   chunk_Y = Y[i:i + chunk]
@@ -115,7 +117,7 @@ total_loss /= total_chunk
 print(f"Mean total loss {total_loss}")
 
 # Save model parameters
-model_save_path = "./models/linear_sgd.npz"
+model_save_path = "./models/linear_sgd_half.npz"
 print(f"Saving model to {model_save_path}")
 
 # Get the model's parameters
