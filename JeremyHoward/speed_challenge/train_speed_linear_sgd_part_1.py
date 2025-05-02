@@ -54,7 +54,6 @@ model = Model()
 
 print(f"Declaring optimizer")
 optim = nn.optim.SGD(nn.state.get_parameters(model), lr=0.01)
-#optim = nn.optim.Adam(params, lr=0.001)
 """SGD may be leading to overfit"""
 
 # Load size
@@ -62,6 +61,7 @@ chunk = 500
 batch = 32
 
 n_chunk = 0
+# 10200
 total_chunk = 20399 // chunk
 
 print(f"Training")
@@ -109,6 +109,7 @@ for i in range (0, 20399, chunk):
 
   total_loss += chunk_loss
   #gc.collect() # Check for garbaje collection
+  break
 
 total_loss /= total_chunk
 print(f"Mean total loss {total_loss}")
@@ -411,5 +412,10 @@ if that does not works reduce the first layer params5
 
 Just adding the dropout prevent it from overfitting.
 This could be used to generate a model based only on linear layers
+
+At about 50% of the data, mean chunck loss is around 1.4 wich may be overfitting
+
+Doing the training on the whole data lead to some unexpected error that i could not catch
+so i'll try to split it into two parts
 
 """

@@ -123,3 +123,40 @@ for i, param in enumerate(nn.state.get_parameters(model)):
 # Save all parameters to a single .npz file
 np.savez(model_save_path, **param_dict)
 print(f"Model linear ADAM saved successfully to {model_save_path}")
+
+
+"""
+Memory usage pre training: 0.1243 GB
+Memory usage outer loop: 1.8421 GB
+Memory usage inner loop: 1.8436 GB
+Doing forward
+Chunk 1-40 % proccessed: 0.0000 | Loss: 537.9241
+Memory usage inner loop: 16.2938 GB
+Doing forward
+Chunk 1-40 % proccessed: 6.4000 | Loss: 399.0925
+Memory usage inner loop: 16.3021 GB
+Doing forward
+Chunk 1-40 % proccessed: 12.8000 | Loss: 387.1075
+Memory usage inner loop: 16.2778 GB
+Doing forward
+Chunk 1-40 % proccessed: 19.2000 | Loss: 327.2999
+Memory usage inner loop: 16.1664 GB
+Doing forward
+Chunk 1-40 % proccessed: 25.6000 | Loss: 317.0074
+Memory usage inner loop: 16.0592 GB
+Doing forward
+Chunk 1-40 % proccessed: 32.0000 | Loss: 287.8840
+Memory usage inner loop: 16.0592 GB
+Doing forward
+Chunk 1-40 % proccessed: 38.4000 | Loss: 254.3805
+Memory usage inner loop: 16.0592 GB
+Doing forward
+Chunk 1-40 % proccessed: 44.8000 | Loss: 278.4726
+Memory usage inner loop: 16.0026 GB
+Doing forward
+Chunk 1-40 % proccessed: 51.2000 | Loss: 261.0692
+Memory usage inner loop: 15.9654 GB
+Doing forward
+Chunk 1-40 % proccessed: 57.6000 | Loss: 259.8530
+Memory usage inner loop: 15.9654 GB
+"""
