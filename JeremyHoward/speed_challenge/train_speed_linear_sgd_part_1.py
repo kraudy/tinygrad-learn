@@ -127,7 +127,7 @@ for i, param in enumerate(nn.state.get_parameters(model)):
 
 # Save all parameters to a single .npz file
 np.savez(model_save_path, **param_dict)
-print(f"Model linear SGD saved successfully to {model_save_path}")
+print(f"Model linear SGD half saved successfully to {model_save_path}")
 
 """
 With RELU

@@ -36,8 +36,21 @@ class Model():
 
 model = Model()
 
+# Load the saved model
+model_save_path = "./models/linear_sgd_half.npz"
+print(f"Loading model from {model_save_path}")
+
+# Load the .npz file
+loaded_params = np.load(model_save_path)
+
+# Assign loaded arrays back to the model's parameters
+params = nn.state.get_parameters(model)
+for i, param in enumerate(params):
+    param.assign(Tensor(loaded_params[f'param_{i}']))
+
+print(f"Model loaded successfully from {model_save_path}")
+
 print(f"Declaring optimizer")
-#params = nn.state.get_parameters(model)
 optim = nn.optim.SGD(nn.state.get_parameters(model), lr=0.01)
 """SGD may be leading to overfit"""
 
@@ -99,7 +112,7 @@ total_loss /= total_chunk
 print(f"Mean total loss {total_loss}")
 
 # Save model parameters
-model_save_path = "./models/linear_sgd_half.npz"
+model_save_path = "./models/linear_sgd_full.npz"
 print(f"Saving model to {model_save_path}")
 
 # Get the model's parameters
@@ -109,4 +122,4 @@ for i, param in enumerate(nn.state.get_parameters(model)):
 
 # Save all parameters to a single .npz file
 np.savez(model_save_path, **param_dict)
-print(f"Model linear SGD saved successfully to {model_save_path}")
+print(f"Model linear SGD full saved successfully to {model_save_path}")
