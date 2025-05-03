@@ -53,8 +53,8 @@ class Model():
 model = Model()
 
 print(f"Declaring optimizer")
-#params = nn.state.get_parameters(model)
-optim = nn.optim.SGD(nn.state.get_parameters(model), lr=0.01)
+params = nn.state.get_parameters(model)
+optim = nn.optim.SGD(nn.state.get_parameters(model), lr=0.1)
 """SGD may be leading to overfit"""
 
 # Load size
@@ -93,8 +93,8 @@ for i in range (0, 10200, chunk):
     print("Doing forward")
     # Not needed for now
     # Add l2 loss regularization
-    # l2_loss = sum(p.square().sum() for p in params) * 0.01
-    loss = model(X_batch).sub(Y_batch).square().mean() # + l2_loss # MSE Loss
+    l2_loss = sum(p.square().sum() for p in params) * 0.0001
+    loss = model(X_batch).sub(Y_batch).square().mean().add(l2_loss) # MSE Loss
     optim.zero_grad()
     loss.backward()
     optim.step()
@@ -111,7 +111,7 @@ for i in range (0, 10200, chunk):
 
   total_loss += chunk_loss
   #gc.collect() # Check for garbaje collection
-  break
+  # break
 
 total_loss /= total_chunk
 print(f"Mean total loss {total_loss}")
