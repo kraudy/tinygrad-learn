@@ -9,6 +9,16 @@ cache_path="./data/flow_images.npy"
 X = shape=(20399, 480, 640, 3)
 Y = shape=(20399,)
 """
+
+# Load size
+chunk = 500
+batch = 32
+
+n_chunk = 0
+# 10200
+#total_chunk = 20399 // chunk
+total_chunk = 10200 // chunk
+
 print(f"Defining network")
 class Model():
   def __init__(self):
@@ -24,7 +34,9 @@ class Model():
     # FC1: 19,660,800 -> 128
     #self.W_fc1 = Tensor.randn(128, 480 * 640 * 64) * (2.0 / (480 * 640 * 64)) ** 0.5
     #self.b_fc1 = Tensor.zeros(128)
-    self.W_fc1 = Tensor.randn(480 * 640 * 64, 128) * (2.0 / (480 * 640 * 64)) ** 0.5
+
+    #self.W_fc1 = Tensor.randn(480 * 640 * 64, 128) * (2.0 / (480 * 640 * 64)) ** 0.5
+    self.W_fc1 = Tensor.randn(16 * 480 * 640, 128) * (2.0 / (16 * 480 * 640)) ** 0.5
     self.b_fc1 = Tensor.zeros(128)
 
     # FC2: 128 -> 1 (single output for regression)
@@ -33,8 +45,11 @@ class Model():
 
 
   def __call__(self, X: Tensor) -> Tensor:
+    # X shape: (batch, 480, 640, 3)
+    # Transpose to (batch, 3, 480, 640) for conv2d
+    X = X.permute(0, 3, 1, 2)  # Now (batch, channels, height, width)
     X = X.conv2d(self.W1, self.b1, padding=1).add(self.b1).relu()
-    X = X.flatten(1)
+    X = X.flatten(1) # Flatten to (batch, 16 * 480 * 640)
     X = X.matmul(self.W_fc1).add(self.b_fc1).tanh()
     X = X.matmul(self.W_fc2).add(self.b_fc2)
     return X
@@ -46,14 +61,6 @@ print(f"Declaring optimizer")
 params = nn.state.get_parameters(model)
 optim = nn.optim.SGD(nn.state.get_parameters(params), lr=0.001)
 
-# Load size
-chunk = 500
-batch = 32
-
-n_chunk = 0
-# 10200
-#total_chunk = 20399 // chunk
-total_chunk = 10200 // chunk
 
 print(f"Training")
 
@@ -100,7 +107,7 @@ for i in range (0, 10200, chunk):
 
   total_loss += chunk_loss
   #gc.collect() # Check for garbaje collection
-  # break
+  break
 
 total_loss /= total_chunk
 print(f"Mean total loss {total_loss}")
