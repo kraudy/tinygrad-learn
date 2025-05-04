@@ -17,6 +17,19 @@ class Model():
     #self.W1 = Tensor.randn(480*640*3, 600) * (1 / 480*640*3) ** 0.5
     self.b1 = Tensor.zeros(1, 16, 1, 1)
 
+    # Fully connected layers
+    # After conv layers, compute output spatial size (assuming stride=1, padding=1)
+    # Input: (480, 640), after 3 conv layers with 3x3, padding=1: still (480, 640)
+    # Flatten: 480 * 640 * 64 = 19,660,800
+    # FC1: 19,660,800 -> 128
+    self.W_fc1 = Tensor.randn(128, 480 * 640 * 64) * (2.0 / (480 * 640 * 64)) ** 0.5
+    self.b_fc1 = Tensor.zeros(128)
+
+    # FC2: 128 -> 1 (single output for regression)
+    self.W_fc2 = Tensor.randn(1, 128) * (2.0 / 128) ** 0.5
+    self.b_fc2 = Tensor.zeros(1)
+
+
   def __call__(self, X: Tensor) -> Tensor:
     X = X.conv2d(self.W1).add(self.b1)
     return X
