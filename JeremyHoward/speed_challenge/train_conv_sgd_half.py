@@ -22,16 +22,21 @@ class Model():
     # Input: (480, 640), after 3 conv layers with 3x3, padding=1: still (480, 640)
     # Flatten: 480 * 640 * 64 = 19,660,800
     # FC1: 19,660,800 -> 128
-    self.W_fc1 = Tensor.randn(128, 480 * 640 * 64) * (2.0 / (480 * 640 * 64)) ** 0.5
+    #self.W_fc1 = Tensor.randn(128, 480 * 640 * 64) * (2.0 / (480 * 640 * 64)) ** 0.5
+    #self.b_fc1 = Tensor.zeros(128)
+    self.W_fc1 = Tensor.randn(480 * 640 * 64, 128) * (2.0 / (480 * 640 * 64)) ** 0.5
     self.b_fc1 = Tensor.zeros(128)
 
     # FC2: 128 -> 1 (single output for regression)
-    self.W_fc2 = Tensor.randn(1, 128) * (2.0 / 128) ** 0.5
+    self.W_fc2 = Tensor.randn(128, 1) * (2.0 / 128) ** 0.5
     self.b_fc2 = Tensor.zeros(1)
 
 
   def __call__(self, X: Tensor) -> Tensor:
-    X = X.conv2d(self.W1).add(self.b1)
+    X = X.conv2d(self.W1, self.b1, padding=1).add(self.b1).relu()
+    X = X.flatten(1)
+    X = X.matmul(self.W_fc1).add(self.b_fc1).tanh()
+    X = X.matmul(self.W_fc2).add(self.b_fc2)
     return X
 
 
