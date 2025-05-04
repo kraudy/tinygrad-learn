@@ -5,15 +5,20 @@ import psutil
 
 cache_path="./data/flow_images.npy"
 
+"""
+X = shape=(20399, 480, 640, 3)
+Y = shape=(20399,)
+"""
 print(f"Defining network")
 class Model():
   def __init__(self):
-    # This first layer is kinda big
-    self.W1 = Tensor.randn(480*640*3, 600) * (1 / 480*640*3) ** 0.5
-    self.b1 = Tensor.zeros(600)
+
+    self.W1 = Tensor.randn(16, 3, 3, 3) * (2.0 / (3 * 3 * 3)) ** 0.5
+    #self.W1 = Tensor.randn(480*640*3, 600) * (1 / 480*640*3) ** 0.5
+    self.b1 = Tensor.zeros(1, 16, 1, 1)
 
   def __call__(self, X: Tensor) -> Tensor:
-    X = X
+    X = X.conv2d(self.W1).add(self.b1)
     return X
 
 
@@ -94,3 +99,4 @@ for i, param in enumerate(nn.state.get_parameters(model)):
 # Save all parameters to a single .npz file
 np.savez(model_save_path, **param_dict)
 print(f"Model conv SGD half saved successfully to {model_save_path}")
+
