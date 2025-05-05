@@ -179,3 +179,4 @@ cython_debug/
 *.txt
 *.Identifier
 *.npy
+*.npz
