@@ -27,11 +27,14 @@ class Model():
     self.W1 = Tensor.randn(16, 3, 3, 3) * (2.0 / (3 * 3 * 3)) ** 0.5
     self.b1 = Tensor.zeros(1, 16, 1, 1)
 
+    self.W2 = Tensor.randn(32, 16, 3, 3) * (2.0 / (16 * 3 * 3)) ** 0.5
+    self.b2 = Tensor.zeros(1, 32, 1, 1)
+
     # Fully connected layers
     # Flatten: 16 * 480 * 640 = 19,660,800
     # FC1: 19,660,800 -> 128
 
-    self.W_fc1 = Tensor.randn(16 * 480 * 640, 128) * (2.0 / (16 * 480 * 640)) ** 0.5
+    self.W_fc1 = Tensor.randn(32 * 480 * 640, 128) * (2.0 / (32 * 480 * 640)) ** 0.5
     self.b_fc1 = Tensor.zeros(128)
 
     # FC2: 128 -> 1 (single output for regression)
@@ -44,8 +47,9 @@ class Model():
     # Transpose to (batch, 3, 480, 640) for conv2d
     X = X.permute(0, 3, 1, 2)  # Now (batch, channels, height, width)
     # padding help us keep shape (1, 16, 480, 640)
-    X = X.conv2d(self.W1, self.b1, padding=1).add(self.b1).relu()
-    X = X.flatten(1) # Flatten to (batch, 16 * 480 * 640)
+    X = X.conv2d(self.W1, self.b1, padding=1).relu().max_pool2d((2,2))
+    X = X.conv2d(self.W2, self.b2, padding=1).relu().max_pool2d((2,2))
+    X = X.flatten(1).dropout() # Flatten to (batch, 16 * 480 * 640)
     X = X.matmul(self.W_fc1).add(self.b_fc1).tanh()
     X = X.matmul(self.W_fc2).add(self.b_fc2)
     return X
