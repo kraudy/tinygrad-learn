@@ -23,19 +23,14 @@ print(f"Defining network")
 class Model():
   def __init__(self):
 
+    # so this expects 3 channels
     self.W1 = Tensor.randn(16, 3, 3, 3) * (2.0 / (3 * 3 * 3)) ** 0.5
-    #self.W1 = Tensor.randn(480*640*3, 600) * (1 / 480*640*3) ** 0.5
     self.b1 = Tensor.zeros(1, 16, 1, 1)
 
     # Fully connected layers
-    # After conv layers, compute output spatial size (assuming stride=1, padding=1)
-    # Input: (480, 640), after 3 conv layers with 3x3, padding=1: still (480, 640)
-    # Flatten: 480 * 640 * 64 = 19,660,800
+    # Flatten: 16 * 480 * 640 = 19,660,800
     # FC1: 19,660,800 -> 128
-    #self.W_fc1 = Tensor.randn(128, 480 * 640 * 64) * (2.0 / (480 * 640 * 64)) ** 0.5
-    #self.b_fc1 = Tensor.zeros(128)
 
-    #self.W_fc1 = Tensor.randn(480 * 640 * 64, 128) * (2.0 / (480 * 640 * 64)) ** 0.5
     self.W_fc1 = Tensor.randn(16 * 480 * 640, 128) * (2.0 / (16 * 480 * 640)) ** 0.5
     self.b_fc1 = Tensor.zeros(128)
 
@@ -48,6 +43,7 @@ class Model():
     # X shape: (batch, 480, 640, 3)
     # Transpose to (batch, 3, 480, 640) for conv2d
     X = X.permute(0, 3, 1, 2)  # Now (batch, channels, height, width)
+    # padding help us keep shape (1, 16, 480, 640)
     X = X.conv2d(self.W1, self.b1, padding=1).add(self.b1).relu()
     X = X.flatten(1) # Flatten to (batch, 16 * 480 * 640)
     X = X.matmul(self.W_fc1).add(self.b_fc1).tanh()
@@ -125,3 +121,22 @@ for i, param in enumerate(nn.state.get_parameters(model)):
 np.savez(model_save_path, **param_dict)
 print(f"Model conv SGD half saved successfully to {model_save_path}")
 
+
+"""
+Some conv2d ops
+
+>>> print(Tensor.randn(1,480,640,3).permute(0,3,1,2).conv2d(Tensor.randn(16,3,3,3), Tensor.zeros(1,16,1,1), padding=1).shape)
+(1, 16, 480, 640)
+>>> print(Tensor.randn(1,480,640,3).permute(0,3,1,2).conv2d(Tensor.randn(32,3,3,3), Tensor.zeros(1,32,1,1), padding=1).shape)
+(1, 32, 480, 640)
+
+>>> print(Tensor.randn(1,480,640,3).permute(0,3,1,2).conv2d(Tensor.randn(64,3,3,3), Tensor.zeros(1,64,1,1), padding=1).shape)
+(1, 64, 480, 640)
+>>> print(Tensor.randn(10,480,640,3).permute(0,3,1,2).conv2d(Tensor.randn(64,3,3,3), Tensor.zeros(1,64,1,1), padding=1).shape)
+(10, 64, 480, 640) 
+
+Error, channels are not the same
+>>> print(Tensor.randn(10,480,640,3).permute(0,3,1,2).conv2d(Tensor.randn(64,7,3,3), Tensor.zeros(1,64,1,1), padding=1).shape)
+AssertionError: Input Tensor shape (10, 3, 480, 640) does not match the shape of the weights (64, 7, 3, 3). (7 vs. 3)
+
+"""
