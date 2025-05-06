@@ -23,7 +23,7 @@ print(f"Defining network")
 class Model():
   def __init__(self):
 
-    # so this expects 3 channels
+    # so this expects 3 channels and outputs 32
     self.W1 = Tensor.randn(32, 3, 3, 3) * (2.0 / (3 * 3 * 3)) ** 0.5
     self.b1 = Tensor.zeros(1, 32, 1, 1)
 
@@ -31,8 +31,8 @@ class Model():
     self.b2 = Tensor.zeros(1, 64, 1, 1)
 
     # Fully connected layers
-    # Flatten: 64 * 480 * 640 = 19,660,800
-    # FC1: 19,660,800 -> 128
+    # Flatten: 64 * 120 * 160 = 1228800
+    # FC1: 1228800 -> 128
     self.W_fc1 = Tensor.randn(64 * 120 * 160, 128) * (2.0 / (64 * 480 * 640)) ** 0.5
     self.b_fc1 = Tensor.zeros(128)
 
@@ -106,7 +106,6 @@ for i in range (0, 10200, chunk):
 
   total_loss += chunk_loss
   #gc.collect() # Check for garbaje collection
-  break
 
 total_loss /= total_chunk
 print(f"Mean total loss {total_loss}")
