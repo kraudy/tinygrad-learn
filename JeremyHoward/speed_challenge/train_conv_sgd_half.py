@@ -32,13 +32,13 @@ class Model():
 
     # Fully connected layers
     # Flatten: 64 * 120 * 160 = 1228800
-    # FC1: 1228800 -> 128
-    self.W_fc1 = Tensor.randn(64 * 120 * 160, 128) * (2.0 / (64 * 480 * 640)) ** 0.5
-    self.b_fc1 = Tensor.zeros(128)
+    # FC1: 1228800 -> 1
+    self.W_fc1 = Tensor.randn(64 * 120 * 160, 1) * (2.0 / (64 * 480 * 640)) ** 0.5
+    self.b_fc1 = Tensor.zeros(1)
 
     # FC2: 128 -> 1 (single output for regression)
-    self.W_fc2 = Tensor.randn(128, 1) * (2.0 / 128) ** 0.5
-    self.b_fc2 = Tensor.zeros(1)
+    #self.W_fc2 = Tensor.randn(128, 1) * (2.0 / 128) ** 0.5
+    #self.b_fc2 = Tensor.zeros(1)
 
 
   def __call__(self, X: Tensor) -> Tensor:
@@ -49,8 +49,8 @@ class Model():
     X = X.conv2d(self.W1, self.b1, padding=1).relu().max_pool2d((2,2)) # 480, 640 => 240, 320
     X = X.conv2d(self.W2, self.b2, padding=1).relu().max_pool2d((2,2)) # 240, 320 => 120, 160
     X = X.flatten(1).dropout() # Flatten to (batch, 16 * 480 * 640)
-    X = X.matmul(self.W_fc1).add(self.b_fc1).tanh()
-    X = X.matmul(self.W_fc2).add(self.b_fc2)
+    X = X.matmul(self.W_fc1).add(self.b_fc1)#.tanh()
+    #X = X.matmul(self.W_fc2).add(self.b_fc2)
     return X
 
 
@@ -58,7 +58,7 @@ model = Model()
 
 print(f"Declaring optimizer")
 params = nn.state.get_parameters(model)
-optim = nn.optim.SGD(nn.state.get_parameters(params), lr=0.001)
+optim = nn.optim.SGD(nn.state.get_parameters(params), lr=0.01)
 
 
 print(f"Training")
