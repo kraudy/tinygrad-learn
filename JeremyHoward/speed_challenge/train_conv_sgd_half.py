@@ -58,7 +58,7 @@ model = Model()
 
 print(f"Declaring optimizer")
 params = nn.state.get_parameters(model)
-optim = nn.optim.SGD(nn.state.get_parameters(params), lr=0.01)
+optim = nn.optim.SGD(nn.state.get_parameters(params), lr=0.001)
 
 
 print(f"Training")
