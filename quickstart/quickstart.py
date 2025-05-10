@@ -19,16 +19,21 @@ optim = nn.optim.SGD([net.l1.weight, net.l2.weight], lr=3e-4)
 
 X_train, Y_train, X_test, Y_test = nn.datasets.mnist()
 
-for step in range(1):
+for step in range(1000):
   Tensor.training = True
   samp = Tensor.randint(64, low=0, high=X_train.shape[0])
   batch = X_train[samp]
   labels = Y_train[samp]
 
-  loss = net(batch).sparse_categorical_crossentropy(labels)
+  out = net(batch)
+  loss = out.sparse_categorical_crossentropy(labels)
 
   optim.zero_grad()
   loss.backward()
   optim.step()
 
-  print(f"Loss: {loss.numpy()}")
+  pred = out.argmax(axis=-1)
+  acc = (pred == labels).mean()
+
+  if step % 100 == 0:
+    print(f"Step {step+1} | Loss: {loss.numpy()} | Accuracy: {acc.numpy()}")
